@@ -254,10 +254,10 @@ function _sendnotification($registatoin_ids, $data)
                     'data' => $data
                     );
     // Google Cloud Messaging GCM API key
-    define("GOOGLE_API_KEY", "AAAAYkMMcpU:APA91bH9RAM0_yac0Oc152TkCi1_cdQrGBN6JzWp5Ki0Ro4u6NOP2nXO1CN3yvjtu1_3-5D2rD-SpEG1R1QcY2E7QBVMCbCowE3jD0ppA5XCmUXutnX0yPDp0ptqsshq-ciETi-TUYVg");
+    $fcm_api_key = getenv('FCM_API_KEY');
 
     $headers = array(
-              'Authorization: key=' . GOOGLE_API_KEY,
+              'Authorization: key=' . $fcm_api_key,
               'Content-Type: application/json'
               );
 

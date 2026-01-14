@@ -677,9 +677,9 @@
         );
 
         // Google Cloud Messaging GCM API Key
-        define("GOOGLE_API_KEY", "AIzaSyCaRuBxKGCnya7dRTiuPph7q0sCv2Nc9sY");
+        $google_api_key = getenv('GOOGLE_API_KEY');
         $headers = array(
-        'Authorization: key=' . GOOGLE_API_KEY,
+        'Authorization: key=' . $google_api_key,
         'Content-Type: application/json'
         );
         $ch = curl_init();
