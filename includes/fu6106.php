@@ -4,10 +4,21 @@
     // E-mail :penting_kaga@yahoo.com
     // ----------------------------------------------------------------------------------
 
-    $host = "192.168.17.5:3306";   
-    $user = "bengkulu";
-    $pass = "a9947cb01c514faee5fef7259b17fb0f";
-    $db   = "bengkulu";
+    $envFile = __DIR__ . '/../.env';
+    if (file_exists($envFile)) {
+        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            if (strpos($line, '=') !== false && strpos($line, '#') !== 0) {
+                list($key, $value) = explode('=', $line, 2);
+                putenv(trim($key) . '=' . trim($value));
+            }
+        }
+    }
+
+    $host = getenv('DB_HOST') . ':' . getenv('DB_PORT');
+    $user = getenv('DB_USER');
+    $pass = getenv('DB_PASSWORD');
+    $db   = getenv('DB_NAME');
 
     $conn = @mysql_connect($host, $user, $pass) or die(mysql_error());
     mysql_select_db($db, $conn) or die(mysql_error($conn));
