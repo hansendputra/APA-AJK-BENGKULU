@@ -263,7 +263,12 @@
   }
 
   if($produk_['id'] != 11 and $produk_['id'] != 12){
-    $qpremi1 = mysql_query("SELECT * FROM ajkratepremi WHERE idbroker = '".$idbro."' and idclient = '".$idclient."' and idpolis = '".$produk_['id']."' and idas = 3 and '".$tenor."' BETWEEN tenorfrom and tenorto and status = 'Aktif' and del is null");
+    if($tenor > 60){
+      $tenormacet = 60;
+    }else{
+      $tenormacet = $tenor;
+    }
+    $qpremi1 = mysql_query("SELECT * FROM ajkratepremi WHERE idbroker = '".$idbro."' and idclient = '".$idclient."' and idpolis = '".$produk_['id']."' and idas = 3 and '".$tenormacet."' BETWEEN tenorfrom and tenorto and status = 'Aktif' and del is null");
     $qpremi2 = mysql_query("SELECT * FROM ajkratepremi WHERE idbroker = '".$idbro."' and idclient = '".$idclient."' and idpolis = '".$produk_['id']."' and idas = 2 and '".$tenor."' BETWEEN tenorfrom and tenorto and '".$usia."' BETWEEN agefrom and ageto and status = 'Aktif' and del is null");  
     $rate = 0;
     $premi = 0;
@@ -273,7 +278,7 @@
       if($macet == 'T'){
         $qpremi1_ = mysql_fetch_array($qpremi1);
         $rate1 = $qpremi1_['rate'];
-        $rate1 = ($rate1/12)*$tenor;
+        $rate1 = ($rate1/12)*$tenormacet;
         $rate += $rate1;
         $premi1 = $plafond/$produk_['calculatedrate'] * $rate1;
         $premi += $premi1;
@@ -480,14 +485,15 @@
     if($produk_['id'] != 11 && $produk_['id'] != 12){
 
       if($macet == 'T'){
+        $tglakhirmacet = date('Y-m-d', strtotime("+".$tenormacet." months", strtotime($tglakad)));
         $pesertaas1 = "INSERT INTO ajkpesertaas
         SET idpeserta='".$idpeserta."',
             idpolis='".$produk."',
             idas=3,
             tsi ='".$plafond."',
             tglawal='".$tglakad."',
-            tglakhir='".$tglakhir."',
-            tenor='".$tenor."',
+            tglakhir='".$tglakhirmacet."',
+            tenor='".$tenormacet."',
             medical='".$medical1."',
             rate='".$rate1."',
             premi='".$premi1."',

@@ -368,8 +368,12 @@ switch($_POST["functionname"]){
 
     $usia = usia($tglakad,$tgllahir);
 
-    // $tenor = $tenor * 12;      
-    $query = 'SELECT * FROM ajkratepremi WHERE '.$tenor.' between tenorfrom and tenorto and idas = 3 and idpolis = "'.$karpot.'" and del is null';
+    if($tenor > 60){
+      $tenormacet = 60;
+    }else{
+      $tenormacet = $tenor;
+    }
+    $query = 'SELECT * FROM ajkratepremi WHERE '.$tenormacet.' between tenorfrom and tenorto and idas = 3 and idpolis = "'.$karpot.'" and del is null';
     $query2 = 'SELECT * FROM ajkratepremi WHERE '.$tenor.' between tenorfrom and tenorto and idas = 2 and idpolis = "'.$karpot.'" and '.$usia.' between agefrom and ageto  and del is null';
     $medical = 'SELECT * FROM ajkmedical WHERE '.$usia.' between agefrom and ageto and idproduk = "'.$karpot.'" and del is null and '.$plafond.' between upfrom and upto';
     $ratemacet = mysql_fetch_array(mysql_query($query));
@@ -382,7 +386,7 @@ switch($_POST["functionname"]){
 
     if($karpot != 11 and $karpot != 12){
       if($macet == "true"){
-        $ratemacet_ = ($ratemacet['rate']/12)*$tenor;
+        $ratemacet_ = ($ratemacet['rate']/12)*$tenormacet;
         $rate += $ratemacet_; 
         $medicals .= 'FCL';
         $premi += ($plafond/1000)*$ratemacet_;
