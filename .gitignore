@@ -1,0 +1,12 @@
+/myFiles/*
+/upload/temp/
+/logs/
+*.bak
+.DS_Store
+*.log
+/node_modules/
+/dist/
+.env
+/modules/temp/
+/klaim/temp/
+/loginv2
