@@ -52,8 +52,6 @@ switch ($_REQUEST['pdf']) {
         $pdf->Image($metLogoBroker, 10, 7, 40, 10);
     }
 
-    //$pdf->SetFont('helvetica','B',20);	$pdf->SetTextColor(255, 0, 0);	$pdf->Text(35, 15,$met_['brokername']);
-    //$pdf->SetFont('helvetica','',14);	$pdf->SetTextColor(0, 0, 0);	$pdf->Text(35, 20,'Broker Insurance');
     $pdf->SetFont('helvetica', 'B', 14);	$pdf->SetTextColor(0, 0, 0);	$pdf->Text(90, 30, 'List Debitnote');
 
     $pdf->ln(15);
@@ -156,9 +154,9 @@ switch ($_REQUEST['pdf']) {
     $pdf->Open();
     $pdf->AliasNbPages();
     $pdf->AddPage();
-    if ($_REQUEST['logCN']) {	// SET ID data debitnote dari FE
+    if ($_REQUEST['logCN']) {	
         $setIDCN = metDecrypt($_REQUEST["idc"]);
-    } else {// SET ID data debitnote dari BE
+    } else {
         $setIDCN = $thisEncrypter->decode($_REQUEST['idc']);
     }
     
@@ -240,9 +238,7 @@ switch ($_REQUEST['pdf']) {
         $pdf->Text( 86, 28, 'INVOICE CREDIT NOTE');
     }
 
-    //$pdf->Text(85, 35,$metCN['nomordebitnote']);
     $pdf->Code39(82, 30, $metCN['nomorcreditnote']);
-
 
     $pdf->MultiCell(0, 25, '', 0);
     $pdf->Cell(39, 4, '', 0, 0, 'L');
@@ -365,12 +361,6 @@ switch ($_REQUEST['pdf']) {
         $pdf->cell(270, 4, "ALL PRODUK", 0, 0, 'C', 0);
         $pdf->ln();
     }
-
-    /*
-        $pdf->cell(270,4,$met_['brokername'],0,0,'C',0);$pdf->ln();
-        $pdf->cell(270,4,$met_['clientname'],0,0,'C',0);$pdf->ln();
-        $pdf->cell(270,4,$met_['produk'],0,0,'C',0);$pdf->ln();
-    */
 
     $pdf->cell(270, 4, $thisEncrypter->decode($_REQUEST['dtfrom']).' - '.$thisEncrypter->decode($_REQUEST['dtto']), 0, 0, 'C', 0);$pdf->ln();
 
@@ -576,7 +566,6 @@ switch ($_REQUEST['pdf']) {
           $pdf->cell(390, 4, "ALL PRODUK", 0, 0, 'C', 0);
           $pdf->ln();
       }
-      //if ($thisEncrypter->decode($_REQUEST['ida'])) {	$pdf->cell(270,4,$met_['insurancename'],0,0,'C',0);	$pdf->ln();	}else{	$pdf->cell(270,4,"ALL INSURANCE",0,0,'C',0);$pdf->ln();	}
 
       $pdf->cell(390, 4, $thisEncrypter->decode($_REQUEST['dtfrom']).' - '.$thisEncrypter->decode($_REQUEST['dtto']), 0, 0, 'C', 0);$pdf->ln();
 
@@ -627,7 +616,7 @@ switch ($_REQUEST['pdf']) {
       }
 
       $query_ins = mysql_query($thisEncrypter->decode($_SESSION['lprmemberIns']));
-      //while ($metCOB_ = mysql_fetch_array($metCOB)) {
+      
       while ($metCOB_ = mysql_fetch_array($query_ins)) {
           $cell[$i][0] = $metCOB_['asuransi'];
           $cell[$i][1] = $metCOB_['produk'];
@@ -682,9 +671,9 @@ switch ($_REQUEST['pdf']) {
       $pdf->Open();
       $pdf->AliasNbPages();
       $pdf->AddPage();
-      if ($_REQUEST['logMB']) {	// SET ID data debitnote dari FE
+      if ($_REQUEST['logMB']) {
           $setID = metDecrypt($_REQUEST["pID"]);
-      } else {// SET ID data debitnote dari BE
+      } else {
           $setID = $thisEncrypter->decode($_REQUEST['idd']);
       }
 
@@ -728,7 +717,7 @@ switch ($_REQUEST['pdf']) {
 			INNER JOIN ajksignature ON ajkdebitnote.idbroker = ajksignature.idbroker AND ajkdebitnote.idclient = ajksignature.idpartner AND ajkdebitnote.idproduk = ajksignature.idproduk
 			WHERE ajkdebitnote.id = "'.$setID.'" AND ajksignature.type = "BANKDN" AND ajksignature.`status` = "Aktif"'));
 
- if ($metmember['logohead'] and $metmember['status']=="Active") {
+     if ($metmember['logohead'] and $metmember['status']=="Active") {
         $pdf->Image('../'.$PathPhoto.''.$metmember['logohead'], $metmember['logoposisix'], $metmember['logoposisiy'], 20, 20);
         $pdf->SetFont('helvetica', 'B', 22);
         $pdf->SetTextColor(255, 0, 0);
@@ -737,19 +726,9 @@ switch ($_REQUEST['pdf']) {
         $pdf->SetFont('helvetica', '', 16);
         $pdf->SetTextColor(0, 0, 0);
         $pdf->Text($metmember['logoposisix'] + 22, $metmember['logoposisixy'] + 25, $metmember['nama2']);
-        }
+      }
 
-    //   $pathFile = '../'.$PathPhoto.''.$metmember['brokerlogo'];
-    //   if (file_exists($pathFile)) {
-    //       $metLogoBroker = $pathFile;
-    //       	// $pdf->Image($metLogoBroker,10,7,50,15);
-    //       $pdf->Image($metLogoBroker, 10, 7, 20, 20);
-    //   }
-
-    //   $pdf->SetFont('helvetica','B',20);	$pdf->SetTextColor(255, 0, 0);	$pdf->Text(35, 15,$metmember['brokername']);
-    //   $pdf->SetFont('helvetica','',14);	$pdf->SetTextColor(0, 0, 0);	$pdf->Text(35, 20,'Broker Insurance');
       $pdf->SetFont('helvetica', 'B', 14);	$pdf->SetTextColor(0, 0, 0);	$pdf->Text(130, 30, 'Daftar Peserta Asuransi');
-      // $pdf->cell(277,5,'Daftar Peserta Asuransi',0,0,'C',0);
 
       $pdf->ln(15);
       $pdf->SetFont('helvetica', '', 10);
@@ -794,7 +773,6 @@ switch ($_REQUEST['pdf']) {
       $pdf->Ln();
 
       for ($j<1;$j<$i;$j++) {
-          // Wrap text for No Pinjaman if longer than 50 chars
           $noPinjaman = $cell[$j][10];
           $wrappedText = wordwrap($noPinjaman, 30, "\n", true);
           $lines = explode("\n", $wrappedText);
@@ -804,18 +782,14 @@ switch ($_REQUEST['pdf']) {
           $x = $pdf->GetX();
           $y = $pdf->GetY();
           
-          // Draw first column (No)
           $pdf->cell(8, $h, $j+1, 1, 0, 'C');
-          
-          // Draw No Pinjaman with MultiCell
+        
           $currentX = $pdf->GetX();
           $currentY = $pdf->GetY();
           $pdf->MultiCell(35, 6, $noPinjaman, 1, 'C');
           
-          // Position for next cells
           $pdf->SetXY($currentX + 35, $currentY);
-          
-          // Draw remaining cells with same height
+        
           $pdf->cell(20, $h, $cell[$j][0], 1, 0, 'C');
           $pdf->cell(65, $h, $cell[$j][1], 1, 0, 'L');
           $pdf->cell(18, $h, $cell[$j][2], 1, 0, 'C');
@@ -825,30 +799,13 @@ switch ($_REQUEST['pdf']) {
           $pdf->cell(10, $h, $cell[$j][6], 1, 0, 'C');
           $pdf->cell(25, $h, $cell[$j][7], 1, 0, 'C');
           $pdf->cell(30, $h, $cell[$j][9], 1, 0, 'R');
-          
-          // Move to next row
+        
           $pdf->SetXY($x, $currentY + $h);
       }
-
-      // for ($j<1;$j<$i;$j++) {
-      //     $pdf->cell(8, 6, $j+1, 1, 0, 'C');
-      //     $pdf->cell(35, 6, $cell[$j][10], 1, 0, 'C');
-      //     $pdf->cell(20, 6, $cell[$j][0], 1, 0, 'C');
-      //     $pdf->cell(65, 6, $cell[$j][1], 1, 0, 'L');
-      //     $pdf->cell(18, 6, $cell[$j][2], 1, 0, 'C');
-      //     $pdf->cell(10, 6, $cell[$j][3], 1, 0, 'C');
-      //     $pdf->cell(30, 6, $cell[$j][4], 1, 0, 'R');
-      //     $pdf->cell(25, 6, $cell[$j][5], 1, 0, 'C');
-      //     $pdf->cell(10, 6, $cell[$j][6], 1, 0, 'C');
-      //     $pdf->cell(25, 6, $cell[$j][7], 1, 0, 'C');
-      //     $pdf->cell(30, 6, $cell[$j][9], 1, 0, 'R');
-      //     $pdf->Ln();
-      // }
 
       $pdf->cell(246, 6, 'Total Premi', 1, 0, 'L', 1);
       $pdf->cell(30, 6, duit($tTotalPremi), 1, 0, 'R', 1);
 
-      //CEK DATA BATAL ATAU REFUND
       if ($metmember['idcn']) {
           $pdf->AddPage();
           $pathFile = '../'.$PathPhoto.''.$metmember['brokerlogo'];
@@ -874,7 +831,8 @@ switch ($_REQUEST['pdf']) {
           $pdf->cell(30, 5, ': '.$metmember['nomordebitnote'], 0, 0, 'L', 0);
           $pdf->ln();
           $pdf->cell(30, 5, 'Cabang', 0, 0, 'L', 0);
-          $pdf->cell(170, 5, ': '.$metmember['cabang'], 0, 0, 'L', 0);		/*$pdf->cell(30,5,'Status',0,0,'L',0);				$pdf->cell(30,5,': '.$metmember['paidstatus'],0,0,'L',0); */	$pdf->ln();
+          $pdf->cell(170, 5, ': '.$metmember['cabang'], 0, 0, 'L', 0);
+          $pdf->ln();
           $pdf->setFont('Arial', '', 9);
           $pdf->setFillColor(233, 233, 233);
           $y_axis1 = 55;
@@ -945,13 +903,12 @@ switch ($_REQUEST['pdf']) {
           $pdf->Ln();
           $pdf->setFont('Arial', 'B', 9);
           $metGrandtotal = $tTotalPremi - $tTotalPremiCN;
-          $pdf->MultiCell(200, 6, 'Grand Total Premium = '.duit($metGrandtotal), 0, 'L');//	$pdf->cell(75,6,'Jakarta, '.$futgl.'',0,0,'L');$pdf->Ln();
+          $pdf->MultiCell(200, 6, 'Grand Total Premium = '.duit($metGrandtotal), 0, 'L');
       }
-      //CEK DATA BATAL ATAU REFUND
 
       $pdf->Ln();
       $pdf->setFont('Arial', '', 9);
-      $pdf->MultiCell(200, 6, 'Catatan :', 0, 'L');//	$pdf->cell(75,6,'Jakarta, '.$futgl.'',0,0,'L');$pdf->Ln();
+      $pdf->MultiCell(200, 6, 'Catatan :', 0, 'L');
       $pdf->MultiCell(200, 6, 'Bukti Konfirmasi ini merupakan dokumen elektronik, sehingga cukup menggunakan cap dan tanda tangan elektronik.', 0, 'L');//	$pdf->cell(75,6,$met_asuransi['name'],0,0,'L');		$pdf->Ln();
 
       $tglIndo__ = explode(" ", $tglIndo);
@@ -964,126 +921,13 @@ switch ($_REQUEST['pdf']) {
       $pdf->cell(50, 6, $metmember['brokername'], 0, 0, 'C', 0);
 
       $pdf->Ln(25);
-      //$pdf->Image('../'.$PathSignature.$metmember['ttd'],190);
-      // $pdf->Image('../'.$PathSignature.$metmember['ttd'], 190);
-    //   $pdf->SetFont('helvetica', 'BU', 9);
-    //   $pdf->cell(190, 4, ' ', 0, 0, 'R');
-    //   $pdf->cell(50, 4, $metmember['namesign'], 0, 0, 'C');
-    //   $pdf->Ln();
-    //   $pdf->SetFont('helvetica', 'B', 9);
-    //   $pdf->cell(190, 4, ' ', 0, 0, 'R');
-    //   $pdf->cell(50, 4, $metmember['jabatan'], 0, 0, 'C');
-
-    //   $pdf->AddPage();
-    //    if ($metmember['logohead'] and $metmember['status']=="Active") {
-    //     $pdf->Image('../'.$PathPhoto.''.$metmember['logohead'], $metmember['logoposisix'], $metmember['logoposisiy'], 20, 20);
-    //     $pdf->SetFont('helvetica', 'B', 22);
-    //     $pdf->SetTextColor(255, 0, 0);
-    //     $pdf->Text($metmember['logoposisix'] + 22, $metmember['logoposisixy'] + 20, $metmember['nama1']);
-
-    //     $pdf->SetFont('helvetica', '', 16);
-    //     $pdf->SetTextColor(0, 0, 0);
-    //     $pdf->Text($metmember['logoposisix'] + 22, $metmember['logoposisixy'] + 25, $metmember['nama2']);
-    //     }
-  
-    //   $pdf->SetFont('helvetica', 'B', 14);	$pdf->SetTextColor(0, 0, 0);	$pdf->Text(130, 30, 'Daftar Peserta Feebase');
-
-    //   $pdf->ln(15);
-    //   $pdf->SetFont('helvetica', '', 10);
-    //   $pdf->cell(30, 5, 'Perusahaan', 0, 0, 'L', 0);	$pdf->cell(170, 5, ': '.$metmember['clientname'], 0, 0, 'L', 0);	$pdf->cell(30, 5, 'Tanggal Debitnote', 0, 0, 'L', 0);		$pdf->cell(30, 5, ': '._convertDate($metmember['tgldebitnote']), 0, 0, 'L', 0);	$pdf->ln();
-    //   $pdf->cell(30, 5, 'Produk', 0, 0, 'L', 0);	$pdf->cell(170, 5, ': '.$metmember['produk'], 0, 0, 'L', 0);		$pdf->cell(30, 5, 'Nota Credit', 0, 0, 'L', 0);				$pdf->cell(30, 5, ': '.str_replace('DN','CN',$metmember['nomordebitnote']), 0, 0, 'L', 0);	$pdf->ln();
-    //   $pdf->cell(30, 5, 'Cabang', 0, 0, 'L', 0);	$pdf->cell(170, 5, ': '.$metmember['cabang'], 0, 0, 'L', 0);		
-
-    //   $pdf->setFont('Arial', '', 9);
-    //   $pdf->setFillColor(233, 233, 233);
-    //   $y_axis1 = 55;
-    //   $pdf->setY($y_axis1);
-    //   $pdf->setX(10);
-
-    //   $metListmember_ = mysql_query('SELECT * FROM ajkpeserta WHERE iddn="'.$metmember['id'].'" AND ajkpeserta.del IS NULL');
-
-    
-
-    //   $pdf->cell(8, 6, 'No', 1, 0, 'C', 1);
-    //   $pdf->cell(35, 6, 'No Pinjaman', 1, 0, 'C', 1);
-    //   $pdf->cell(20, 6, 'Id Peserta', 1, 0, 'C', 1);
-    //   $pdf->cell(65, 6, 'Nama', 1, 0, 'C', 1);
-    //   $pdf->cell(18, 6, 'Tgl. Lahir', 1, 0, 'C', 1);
-    //   $pdf->cell(10, 6, 'Usia', 1, 0, 'C', 1);
-    //   $pdf->cell(30, 6, 'Plafond', 1, 0, 'C', 1);
-    //   $pdf->cell(25, 6, 'Tgl. Mulai', 1, 0, 'C', 1);
-    //   $pdf->cell(10, 6, 'Tenor', 1, 0, 'C', 1);
-    //   $pdf->cell(25, 6, 'Tgl. Akhir', 1, 0, 'C', 1);
-    //   $pdf->cell(30, 6, 'Feebase', 1, 0, 'C', 1);
-    //   $i = 0;
-    //   $j = 0;
-    //   while ($_metListmember = mysql_fetch_array($metListmember_)) {
-    //     $metPolis_ = mysql_fetch_array(mysql_query('SELECT * FROM ajkpolis WHERE id="'.$_metListmember['idpolicy'].'" and del is null'));
-    //     $premi = $_metListmember['totalpremi']*$metPolis_['feebase']/100;
-    //       $cell[$i][0] = $_metListmember['idpeserta'];
-    //       $cell[$i][1] = $_metListmember['nama'];
-    //       $cell[$i][2] = _convertDate($_metListmember['tgllahir']);
-    //       $cell[$i][3] = $_metListmember['usia'];
-    //       $cell[$i][4] = duit($_metListmember['plafond']);
-    //       $cell[$i][5] = _convertDate($_metListmember['tglakad']);
-    //       $cell[$i][6] = $_metListmember['tenor'];
-    //       $cell[$i][7] = _convertDate($_metListmember['tglakhir']);
-    //       $cell[$i][9] = duit($premi);
-    //       $cell[$i][10] = $_metListmember['nopinjaman'];
-    //       $i++;
-    //       $tTotalPeserta += $_metListmember['nama'];
-    //       $tTotalFeebase += $premi;
-    //   }
-    //   $pdf->Ln();
-    //   for ($j<1;$j<$i;$j++) {
-    //       $pdf->cell(8, 6, $j+1, 1, 0, 'C');
-    //       $pdf->cell(35, 6, $cell[$j][10], 1, 0, 'C');
-    //       $pdf->cell(20, 6, $cell[$j][0], 1, 0, 'C');
-    //       $pdf->cell(65, 6, $cell[$j][1], 1, 0, 'L');
-    //       $pdf->cell(18, 6, $cell[$j][2], 1, 0, 'C');
-    //       $pdf->cell(10, 6, $cell[$j][3], 1, 0, 'C');
-    //       $pdf->cell(30, 6, $cell[$j][4], 1, 0, 'R');
-    //       $pdf->cell(25, 6, $cell[$j][5], 1, 0, 'C');
-    //       $pdf->cell(10, 6, $cell[$j][6], 1, 0, 'C');
-    //       $pdf->cell(25, 6, $cell[$j][7], 1, 0, 'C');
-    //       $pdf->cell(30, 6, $cell[$j][9], 1, 0, 'R');
-    //       $pdf->Ln();
-    //   }
-
-    //   $pdf->cell(246, 6, 'Total Feebase', 1, 0, 'L', 1);
-    //   $pdf->cell(30, 6, duit($tTotalFeebase), 1, 0, 'R', 1);      
-    //   $pdf->ln(10);
-    //   $pdf->SetFont('helvetica', 'B', 9);
-    //   $pdf->cell(232, 4, 'Jakarta, '.$tglIndo__[0].' '.$metTglIndo.' '.$tglIndo__[2].'', 0, 0, 'R', 0);
-
-    //   $pdf->ln();
-    //   $pdf->cell(190, 4, '', 0, 0, 'L', 0);$pdf->SetFont('helvetica', 'B', 9);
-    //   $pdf->cell(50, 6, $metmember['brokername'], 0, 0, 'C', 0);
-    //   $pdf->Ln(25);
       
-    //   $pdf->SetFont('helvetica', 'BU', 9);
-    //   $pdf->cell(190, 4, ' ', 0, 0, 'R');
-    //   $pdf->cell(50, 4, $metmember['namesign'], 0, 0, 'C');
-    //   $pdf->Ln();
-    //   $pdf->SetFont('helvetica', 'B', 9);
-    //   $pdf->cell(190, 4, ' ', 0, 0, 'R');
-    //   $pdf->cell(50, 4, $metmember['jabatan'], 0, 0, 'C');
 
       $pdf->Output('MEMBER_'.$metmember['nomordebitnote'].".pdf", "I");
       ;
   break;
 
   case "rptdebitnote":
-
-      /*
-         echo $thisEncrypter->decode($_REQUEST['idb']).'<br />';
-         echo $thisEncrypter->decode($_REQUEST['idc']).'<br />';
-         echo $thisEncrypter->decode($_REQUEST['idp']).'<br />';
-         echo $thisEncrypter->decode($_REQUEST['dtfrom']).'<br />';
-         echo $thisEncrypter->decode($_REQUEST['dtto']).'<br />';
-         echo $thisEncrypter->decode($_REQUEST['st']).'<br />';
-      */
-
       $pdf=new FPDF('P', 'mm', 'A4');
       $pdf->Open();
       $pdf->AliasNbPages();
@@ -1106,9 +950,6 @@ switch ($_REQUEST['pdf']) {
 								  LEFT JOIN ajkpolis ON ajkclient.id = ajkpolis.idcost
 								  WHERE ajkcobroker.del IS NULL '.$satu.' '.$dua.'  '.$tiga.''));
 
-
-
-
       $pdf->ln(-12);
       $pdf->SetFont('helvetica', 'B', 10);
       $pdf->cell(190, 4, 'REPORT DEBITNOTE', 0, 0, 'C', 0);$pdf->ln();
@@ -1127,14 +968,6 @@ switch ($_REQUEST['pdf']) {
           $pdf->cell(190, 4, "ALL PRODUK", 0, 0, 'C', 0);
           $pdf->ln();
       }
-
-      /*
-              $pdf->cell(190,4,$met_['brokername'],0,0,'C',0);$pdf->ln();
-              $pdf->cell(190,4,$met_['clientname'],0,0,'C',0);$pdf->ln();
-              $pdf->cell(190,4,$met_['produk'],0,0,'C',0);$pdf->ln();
-      */
-
-
 
       if ($_REQUEST['dtfrom'] or $_REQUEST['dtto']) {
           $pdf->cell(190, 4, $thisEncrypter->decode($_REQUEST['dtfrom']).' - '.$thisEncrypter->decode($_REQUEST['dtto']), 0, 0, 'C', 0);
@@ -1234,15 +1067,7 @@ switch ($_REQUEST['pdf']) {
   break;
 
   case "rptcreditnote":
-      /*
-         echo $thisEncrypter->decode($_REQUEST['idb']).'<br />';
-         echo $thisEncrypter->decode($_REQUEST['idc']).'<br />';
-         echo $thisEncrypter->decode($_REQUEST['idp']).'<br />';
-         echo $thisEncrypter->decode($_REQUEST['dtfrom']).'<br />';
-         echo $thisEncrypter->decode($_REQUEST['dtto']).'<br />';
-         echo $thisEncrypter->decode($_REQUEST['st']).'<br />';
-      */
-
+    
       $pdf=new FPDF('L', 'mm', 'A4');
       $pdf->Open();
       $pdf->AliasNbPages();
@@ -1461,10 +1286,6 @@ switch ($_REQUEST['pdf']) {
     $pdf->SetFont('helvetica', 'B', 12);
     $pdf->Text(75, 28, 'CHECKLIST DOKUMEN KLAIM');
 
-    //$pdf->Text(85, 35,$metCN['nomordebitnote']);
-    // $pdf->Code39(82, 30, $metCN['nomorcreditnote']);
-
-
     $pdf->MultiCell(0, 25, '', 0);
     $pdf->Cell(39, 4, '', 0, 0, 'L');
     $pdf->SetFont('helvetica', '', 12);
@@ -1582,7 +1403,6 @@ switch ($_REQUEST['pdf']) {
                 $pdf->cell(50, 6, $metDoc_['catatan'], 1, 1, 'C', 0);
             }
 
-    // $pdf->setY(100);
     $pdf->ln();
     $pdf->setFont('Arial', '', 7);
     $pdf->MultiCell(105, 5, "Keterangan : \n".$metCN['keterangan'], 1, 'L', 0);
@@ -1596,9 +1416,7 @@ switch ($_REQUEST['pdf']) {
     $pdf->ln(3);
     $pdf->SetFont('helvetica', 'B', 10);
     $pdf->cell(111, 5, '', 0, 0, 'L', 0);	$pdf->cell(75, 7, 'PT. ADONAI PIALANG ASURANSI', 0, 0, 'L', 0);
-    // $pdf->ln();
     $pdf->setFont('Arial', '', 10);
-    //$pdf->setY($y=$y+65);
     $pdf->ln(15);
     $met_klaim = mysql_fetch_array(mysql_query('SELECT *,DATEDIFF(approve_time,tglklaim)as diftoday,DATE_ADD(tglklaim,INTERVAL 120 DAY)as date_exp FROM ajkcreditnote WHERE id="'.$setIDCN.'" AND del IS NULL'));
 
@@ -1611,7 +1429,6 @@ switch ($_REQUEST['pdf']) {
         $note = "Klaim tersebut telah kadaluarsa, namun kami akan mengusahakannya dan mohon dapat melengkapi dan mengirimkan dalam waktu dekat";
     }
 
-    // $pdf->setY($y=$y+25);
     $pdf->setX(120);
     $pdf->setFont('Arial', 'B', 10);
     $pdf->MultiCell(75, 5, "Note : ".$note, 0, 'L', 0);
@@ -1626,15 +1443,14 @@ switch ($_REQUEST['pdf']) {
       $pdf->Open();
       $pdf->AliasNbPages();
       $pdf->AddPage();
-      if ($_REQUEST['logDN']) {	// SET ID data debitnote dari FE
+      if ($_REQUEST['logDN']) {
           $setID = metDecrypt($_REQUEST["pID"]);
-
-      } else {// SET ID data debitnote dari BE
+      } else {
           $setID = $thisEncrypter->decode($_REQUEST['idd']);
       }
 
       $nfile = base64_encode('BENGKULU'.'/'.'DN'.'/'.md5($setID));
-      $tempdir = "../modules/temp/"; //Nama folder tempat menyimpan file qrcode
+      $tempdir = "../modules/temp/";
       if (!file_exists($tempdir)) {    
         mkdir($tempdir, 0777, true);
         chmod($tempdir, 0777);
@@ -1736,10 +1552,12 @@ switch ($_REQUEST['pdf']) {
       $pdf->Cell(39, 5, '', 0, 0, 'L');
       if ($cekNilaiCN['iddn']) {
           $metGrandtotal_ = $metDN['premiclient'] - $cekNilaiCN['nilaiclaimclient'];
-          $metterbilang_ = mametbilang(duitterbilang($metGrandtotal_)).'rupiah';
+          $metterbilang_ = mametbilang(duitterbilang($metGrandtotal_)).' rupiah';
+          $terbilanglen = strlen($metterbilang_);
           $pdf->MultiCell(150, 5, ':'.ucwords($metterbilang_).'', 0);
       } else {
-          $metterbilang_ = mametbilang(duitterbilang($metDN['premiclient'])).'rupiah';
+          $metterbilang_ = mametbilang(duitterbilang($metDN['premiclient'])).' rupiah';
+          $terbilanglen = strlen($metterbilang_);
           $pdf->MultiCell(150, 5, ':'.ucwords($metterbilang_).'', 0);
       }
 
@@ -1759,7 +1577,12 @@ switch ($_REQUEST['pdf']) {
       $tanggalwpc=date('Y-m-d', strtotime($metDN['tgldebitnote']."+ ".$metDN['wpc']." day"));
       $pdf->cell(115, 5, '', 0, 0, 'L', 0);
       $pdf->SetFont('helvetica', 'B', 9);
-      $pdf->Line(197, 93, 129, 93);
+      if($terbilanglen > 80){
+        $pdf->Line(197, 97, 129, 97);
+      }else{
+        $pdf->Line(197, 93, 129, 93);
+      }
+      
       $pdf->cell(32, 5, 'Total Premi', 0, 0, 'L', 0);			$pdf->cell(10, 5, ': Rp', 0, 0, 'L', 0);	$pdf->cell(25, 5, duit($metDN['premiclient']), 0, 0, 'R', 0);
 
       if ($cekNilaiCN['iddn']) {
@@ -1808,9 +1631,13 @@ switch ($_REQUEST['pdf']) {
           $pdf->ln(25);
       } else {
           $pdf->ln();
-          // $pdf->Image('../'.$PathSignature.$metDN['ttd']);
       }
-      $pdf->Image($tempdir.$nfile.'.png',25,120,30,30);
+      if($terbilanglen > 80){
+        $pdf->Image($tempdir.$nfile.'.png',25,125,30,30);
+      }else{
+        $pdf->Image($tempdir.$nfile.'.png',25,120,30,30);
+      }
+      
       $pdf->ln(20);
       $pdf->SetFont('helvetica', 'B', 9);
       $pdf->cell(5, 4, '', 0, 0, 'L', 0);
@@ -1828,4 +1655,4 @@ switch ($_REQUEST['pdf']) {
 
       $pdf->Output($metDN['nomordebitnote'].".pdf", "I");
   ;
-} // switch
+}
