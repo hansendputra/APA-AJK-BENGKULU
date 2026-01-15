@@ -559,7 +559,10 @@ $setproduk = '';
 		  App.init();
     
 			$(".active").removeClass("active");
-			document.getElementById("has_input").classList.add("active");
+			var hasInputEl = document.getElementById("has_input");
+			if(hasInputEl) {
+				hasInputEl.classList.add("active");
+			}
 			
 			// Handle radio button change untuk menampilkan/menyembunyikan extrapremi
 			$('input[name="aksi"]').change(function() {
