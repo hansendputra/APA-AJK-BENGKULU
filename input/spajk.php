@@ -581,24 +581,14 @@ $setproduk = '';
 				// Validasi aksi dipilih
 				var aksi = $('input[name="aksi"]:checked').val();
 				if(!aksi) {
-					swal({
-						title: "Validasi",
-						text: "Silahkan pilih aksi terlebih dahulu",
-						type: "warning",
-						confirmButtonColor: "#DD6B55"
-					});
+					alert('Silahkan pilih aksi terlebih dahulu');
 					return false;
 				}
 				
 				// Validasi keterangan mandatori
 				var keterangan = $('#keterangan_aksi').val().trim();
 				if(!keterangan) {
-					swal({
-						title: "Validasi",
-						text: "Silahkan masukkan keterangan",
-						type: "warning",
-						confirmButtonColor: "#DD6B55"
-					});
+					alert('Silahkan masukkan keterangan');
 					return false;
 				}
 				
@@ -606,34 +596,16 @@ $setproduk = '';
 				if(aksi === 'Approve') {
 					var extrapremi = $('#extrapremi').val().trim();
 					if(!extrapremi) {
-						swal({
-							title: "Validasi",
-							text: "Silahkan masukkan nilai extrapremi",
-							type: "warning",
-							confirmButtonColor: "#DD6B55"
-						});
+						alert('Silahkan masukkan nilai extrapremi');
 						return false;
 					}
 				}
 				
 				// Konfirmasi dengan user
 				var pesan = 'Apakah Anda yakin untuk melakukan aksi ' + aksi + '?';
-				swal({
-					title: "Konfirmasi",
-					text: pesan,
-					type: "warning",
-					showCancelButton: true,
-					confirmButtonColor: "#DD6B55",
-					cancelButtonColor: "#999",
-					confirmButtonText: "Ya, Lanjutkan",
-					cancelButtonText: "Tidak, Batalkan",
-					allowOutsideClick: false,
-					allowEscapeKey: false
-				}, function(isConfirm) {
-					if(isConfirm) {
-						$('#inputmember').submit();
-					}
-				});
+				if(confirm(pesan)) {
+					$('#inputmember').submit();
+				}
 			});
 		});
 	</script>
