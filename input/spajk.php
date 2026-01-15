@@ -186,7 +186,7 @@ $setproduk = '';
               </div>
             </div>
             <hr>
-            <div class="form-group">
+            <div class="form-group"  style="display:none">
               <label class="control-label col-sm-2">Berat Badan </label>
               <div class="col-sm-4">
                 <input type="text" class="form-control" name="bb" value="<?= $bb['answer'] ?>" <?= isset($idas) ? 'readonly': '';?>>
@@ -196,7 +196,7 @@ $setproduk = '';
                 <input type="text" class="form-control" name="tb" value="<?= $tb['answer'] ?>" <?= isset($idas) ? 'readonly': '';?>>
               </div>              
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
               <table class="table" width="100%">
                 <tr>
                   <td style="vertical-align: top;" width="1%">1</td>
@@ -264,26 +264,56 @@ $setproduk = '';
                 </tr>
               </table>            
             </div>            
+            <hr>
+            <div class="form-group">
+                <label class="control-label col-sm-2">KTP</label>
+                <div class="col-sm-10">
+                  <?php if(isset($peserta) && $peserta['ktp_file']!=''){ ?>
+                    <a href="<?= '../myFiles/_peserta/'.$peserta['idpeserta'].'/'.$peserta['ktp_file'] ?>" target="_blank" class="btn-sm btn-primary">Download</a>
+                  <?php } ?>
+                </div>                 
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">SPAJK/LPK</label>
+                <div class="col-sm-10">
+                  <?php if(isset($peserta) && $peserta['sppa_file']!=''){ ?>
+                    <a href="<?= '../myFiles/_peserta/'.$peserta['idpeserta'].'/'.$peserta['sppa_file'] ?>" target="_blank" class="btn-sm btn-primary">Download</a>
+                  <?php } ?>
+                </div>                 
+            </div>
+            <hr>
             <?php 
             if(isset($idas)) {
             ?>
-            <a href="../myFiles/_peserta/<?= $peserta['idpeserta'] ?>/<?= $peserta['sppa_file'] ?>" class="btn btn-primary btn-xs" target="_blank">Download</a>
-            <hr>
             <div class="form-group">
-              <label class="control-label col-sm-2">Extrapremi (%)</label>
+              <label class="control-label col-sm-2">Pilihan Aksi <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" name="extrapremi" >
+                <label class="radio-inline">
+                  <input type="radio" name="aksi" value="Approve" id="aksi_approve"> Approve
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="aksi" value="Revisi" id="aksi_revisi"> Revisi
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="aksi" value="Tolak" id="aksi_tolak"> Tolak
+                </label>
               </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-sm-2">Keterangan Extra Premi </label>
+              <label class="control-label col-sm-2">Keterangan <span class="text-danger">*</span></label>
               <div class="col-sm-10">
-                <textarea name="keteranganem" id="keteranganem" class="form-control"></textarea>
+                <textarea name="keterangan_aksi" id="keterangan_aksi" class="form-control" placeholder="Masukkan keterangan untuk aksi yang dipilih"></textarea>
               </div>
-            </div>            
+            </div>
+            <div class="form-group" id="extrapremi-group" style="display:none">
+              <label class="control-label col-sm-2">Extrapremi (%)</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="extrapremi" id="extrapremi">
+              </div>
+            </div>
             <div class="form-group m-b-0">
               <div class="col-sm-12 text-center">
-                <button type="submit" id="load" class="btn btn-success width-xs" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Loading..">Approve</button>
+                <button type="button" id="submit-btn" class="btn btn-success width-xs" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Loading..">Submit</button>
               </div>
             </div>
             <?php 
@@ -404,46 +434,108 @@ $setproduk = '';
 
       case "approveas":              
         $idpeserta = $_POST['idpeserta'];
-        $keterangan = $_POST['keterangan'];
-        $extrapremi = $_POST['keteranganem'];
+        $aksi = $_POST['aksi'];
+        $keterangan = $_POST['keterangan_aksi'];
+        $extrapremi = isset($_POST['extrapremi']) ? $_POST['extrapremi'] : 0;
         
         $qpeserta = mysql_fetch_array(mysql_query("SELECT * FROM ajkpeserta WHERE idpeserta = '".$idpeserta."'"));
 
-        $premi = $qpeserta['premi'];
-        $em = $premi * $extrapremi/100;
-        $totalpremi = $premi + $em;
-
-        $querypeserta = "UPDATE ajkpeserta 
-        SET statusaktif = 'Inforce',
-        extrapremi = '".$em."',
-        totalpremi = '".$totalpremi."'
-        WHERE idpeserta = '".$idpeserta."'";
-
-        $querypesertaas = "UPDATE ajkpesertaas
-        SET em = '".$em."',
-        totalpremi = '".$totalpremi."'
-        WHERE idpeserta = '".$idpeserta."' and idas = 2";
-
-        try{
-          mysql_query("START TRANSACTION");
-          mysql_query($querypeserta);
-          mysql_query($querypesertaas);
-
-          mysql_query("COMMIT");
-          echo '
-          <div class="panel panel-default">
-						<div class="panel-heading">
-			           	<h4 class="m-t-0">SPAJK</h4>
-			       	</div>
-			       	<div class="panel-body">
-			       		<div class="alert alert-warning fade in m-b-10"><h4><strong> SPAJK telah diapprove oleh '.$namauser.'.</strong><br /></h4></div>
-			        </div>
-				    </div>
-				    <meta http-equiv="refresh" content="3; url=../masterdata?type='.AES::encrypt128CBC('pesertapendingspajk', ENCRYPTION_KEY).'">';
-        }catch(Exception $e){
-          mysql_query("ROLLBACK");
-        }        
-      break;
+        $statusaktif = '';
+        $pesan = '';
+        
+        if($aksi === 'Approve') {
+          $statusaktif = 'Approve';
+          $premi = $qpeserta['premi'];
+          $em = $premi * $extrapremi/100;
+          $totalpremi = $premi + $em;
+          
+          $querypeserta = "UPDATE ajkpeserta 
+          SET statusaktif = '".$statusaktif."',
+          extrapremi = '".$em."',
+          totalpremi = '".$totalpremi."'
+          WHERE idpeserta = '".$idpeserta."'";
+          
+          $querypesertaas = "UPDATE ajkpesertaas
+          SET em = '".$em."',
+          totalpremi = '".$totalpremi."'
+          WHERE idpeserta = '".$idpeserta."' and idas = 2";
+          
+          $pesan = 'SPAJK telah diapprove oleh '.$namauser.'.';
+          
+          try{
+            mysql_query("START TRANSACTION");
+            mysql_query($querypeserta);
+            mysql_query($querypesertaas);
+            mysql_query("COMMIT");
+            
+            echo '
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="m-t-0">SPAJK</h4>
+              </div>
+              <div class="panel-body">
+                <div class="alert alert-warning fade in m-b-10"><h4><strong> '.$pesan.'<br /></h4></div>
+              </div>
+            </div>
+            <meta http-equiv="refresh" content="3; url=../masterdata?type='.AES::encrypt128CBC('pesertapendingspajk', ENCRYPTION_KEY).'">';
+          }catch(Exception $e){
+            mysql_query("ROLLBACK");
+          }
+        } 
+        else if($aksi === 'Revisi') {
+          $statusaktif = 'validasi';
+          $pesan = 'SPAJK diminta untuk revisi oleh '.$namauser.'.';
+          
+          $querypeserta = "UPDATE ajkpeserta 
+          SET statusaktif = '".$statusaktif."'
+          WHERE idpeserta = '".$idpeserta."'";
+          
+          try{
+            mysql_query("START TRANSACTION");
+            mysql_query($querypeserta);
+            mysql_query("COMMIT");
+            
+            echo '
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="m-t-0">SPAJK</h4>
+              </div>
+              <div class="panel-body">
+                <div class="alert alert-warning fade in m-b-10"><h4><strong> '.$pesan.'<br /></h4></div>
+              </div>
+            </div>
+            <meta http-equiv="refresh" content="3; url=../masterdata?type='.AES::encrypt128CBC('pesertapendingspajk', ENCRYPTION_KEY).'">';
+          }catch(Exception $e){
+            mysql_query("ROLLBACK");
+          }
+        }
+        else if($aksi === 'Tolak') {
+          $statusaktif = 'Tolak Asuransi';
+          $pesan = 'SPAJK telah ditolak oleh '.$namauser.'.';
+          
+          $querypeserta = "UPDATE ajkpeserta 
+          SET statusaktif = '".$statusaktif."'
+          WHERE idpeserta = '".$idpeserta."'";
+          
+          try{
+            mysql_query("START TRANSACTION");
+            mysql_query($querypeserta);
+            mysql_query("COMMIT");
+            
+            echo '
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="m-t-0">SPAJK</h4>
+              </div>
+              <div class="panel-body">
+                <div class="alert alert-danger fade in m-b-10"><h4><strong> '.$pesan.'<br /></h4></div>
+              </div>
+            </div>
+            <meta http-equiv="refresh" content="3; url=../masterdata?type='.AES::encrypt128CBC('pesertapendingspajk', ENCRYPTION_KEY).'">';
+          }catch(Exception $e){
+            mysql_query("ROLLBACK");
+          }
+        }
 
 
       }
@@ -467,7 +559,79 @@ $setproduk = '';
 		  App.init();
     
 			$(".active").removeClass("active");
-			document.getElementById("has_input").classList.add("active");			
+			document.getElementById("has_input").classList.add("active");
+			
+			// Handle radio button change untuk menampilkan/menyembunyikan extrapremi
+			$('input[name="aksi"]').change(function() {
+				if($(this).val() === 'Approve') {
+					$('#extrapremi-group').show();
+				} else {
+					$('#extrapremi-group').hide();
+					$('#extrapremi').val('');
+				}
+			});
+			
+			// Handle submit button dengan konfirmasi
+			$('#submit-btn').click(function(e) {
+				e.preventDefault();
+				
+				// Validasi aksi dipilih
+				var aksi = $('input[name="aksi"]:checked').val();
+				if(!aksi) {
+					swal({
+						title: "Validasi",
+						text: "Silahkan pilih aksi terlebih dahulu",
+						type: "warning",
+						confirmButtonColor: "#DD6B55"
+					});
+					return false;
+				}
+				
+				// Validasi keterangan mandatori
+				var keterangan = $('#keterangan_aksi').val().trim();
+				if(!keterangan) {
+					swal({
+						title: "Validasi",
+						text: "Silahkan masukkan keterangan",
+						type: "warning",
+						confirmButtonColor: "#DD6B55"
+					});
+					return false;
+				}
+				
+				// Validasi extrapremi jika approve
+				if(aksi === 'Approve') {
+					var extrapremi = $('#extrapremi').val().trim();
+					if(!extrapremi) {
+						swal({
+							title: "Validasi",
+							text: "Silahkan masukkan nilai extrapremi",
+							type: "warning",
+							confirmButtonColor: "#DD6B55"
+						});
+						return false;
+					}
+				}
+				
+				// Konfirmasi dengan user
+				var pesan = 'Apakah Anda yakin untuk melakukan aksi ' + aksi + '?';
+				swal({
+					title: "Konfirmasi",
+					text: pesan,
+					type: "warning",
+					showCancelButton: true,
+					confirmButtonColor: "#DD6B55",
+					cancelButtonColor: "#999",
+					confirmButtonText: "Ya, Lanjutkan",
+					cancelButtonText: "Tidak, Batalkan",
+					closeOnConfirm: true,
+					closeOnCancel: true
+				}, function(isConfirm) {
+					if(isConfirm) {
+						$('#inputmember').submit();
+					}
+				});
+			});
 		});
 	</script>
 </body>

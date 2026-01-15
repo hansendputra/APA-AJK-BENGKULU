@@ -114,7 +114,9 @@
                             <td class="text-center">'.$peserta['nmcabang'].'</td>
                             <td class="text-center">'._convertDate($peserta['tglakad']).'</td>  
                             <td class="text-right">'.duit($peserta['plafond']).'</td>
-                            <td class="text-center"><a class="btn btn-xs btn-primary" href="../input/spajk.php?xq='.AES::encrypt128CBC('form',ENCRYPTION_KEY).'&is='.$peserta['idpeserta'].'" target="_blank">View</a></td>
+                            <td class="text-center">
+                              <a class="btn btn-xs btn-primary" href="../input/spajk.php?xq='.AES::encrypt128CBC('form',ENCRYPTION_KEY).'&is='.$peserta['idpeserta'].'" target="_blank">View</a>
+                            </td>
                           </tr>';
                         }
                       ?>
