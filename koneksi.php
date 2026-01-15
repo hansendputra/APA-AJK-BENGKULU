@@ -489,7 +489,6 @@
             echo 'var idleTime = 0;
 
         function idleTimer() {
-            console.log("timer: "+idleTime)
             idleTime = idleTime + 1;
             if (idleTime > 600) {
                 window.location="../dologout.php";
