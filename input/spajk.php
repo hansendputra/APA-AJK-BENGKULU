@@ -581,10 +581,10 @@ $setproduk = '';
 				// Validasi aksi dipilih
 				var aksi = $('input[name="aksi"]:checked').val();
 				if(!aksi) {
-					swal({
+					Swal.fire({
 						title: "Validasi",
 						text: "Silahkan pilih aksi terlebih dahulu",
-						type: "warning",
+						icon: "warning",
 						confirmButtonColor: "#DD6B55"
 					});
 					return false;
@@ -593,10 +593,10 @@ $setproduk = '';
 				// Validasi keterangan mandatori
 				var keterangan = $('#keterangan_aksi').val().trim();
 				if(!keterangan) {
-					swal({
+					Swal.fire({
 						title: "Validasi",
 						text: "Silahkan masukkan keterangan",
-						type: "warning",
+						icon: "warning",
 						confirmButtonColor: "#DD6B55"
 					});
 					return false;
@@ -606,10 +606,10 @@ $setproduk = '';
 				if(aksi === 'Approve') {
 					var extrapremi = $('#extrapremi').val().trim();
 					if(!extrapremi) {
-						swal({
+						Swal.fire({
 							title: "Validasi",
 							text: "Silahkan masukkan nilai extrapremi",
-							type: "warning",
+							icon: "warning",
 							confirmButtonColor: "#DD6B55"
 						});
 						return false;
@@ -618,19 +618,17 @@ $setproduk = '';
 				
 				// Konfirmasi dengan user
 				var pesan = 'Apakah Anda yakin untuk melakukan aksi ' + aksi + '?';
-				swal({
+				Swal.fire({
 					title: "Konfirmasi",
 					text: pesan,
-					type: "warning",
+					icon: "warning",
 					showCancelButton: true,
 					confirmButtonColor: "#DD6B55",
 					cancelButtonColor: "#999",
 					confirmButtonText: "Ya, Lanjutkan",
-					cancelButtonText: "Tidak, Batalkan",
-					closeOnConfirm: true,
-					closeOnCancel: true
-				}, function(isConfirm) {
-					if(isConfirm) {
+					cancelButtonText: "Tidak, Batalkan"
+				}).then(function(result) {
+					if(result.isConfirmed) {
 						$('#inputmember').submit();
 					}
 				});
