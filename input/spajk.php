@@ -477,7 +477,7 @@ $setproduk = '';
                 <div class="alert alert-warning fade in m-b-10"><h4><strong> '.$pesan.'<br /></h4></div>
               </div>
             </div>
-            <meta http-equiv="refresh" content="3; url=../masterdata?type='.AES::encrypt128CBC('pesertapendingspajk', ENCRYPTION_KEY).'">';
+            <meta http-equiv="refresh" content="3; url=../dashboard">';
           }catch(Exception $e){
             mysql_query("ROLLBACK");
           }
@@ -590,15 +590,6 @@ $setproduk = '';
 				if(!keterangan) {
 					alert('Silahkan masukkan keterangan');
 					return false;
-				}
-				
-				// Validasi extrapremi jika approve
-				if(aksi === 'Approve') {
-					var extrapremi = $('#extrapremi').val().trim();
-					if(!extrapremi) {
-						alert('Silahkan masukkan nilai extrapremi');
-						return false;
-					}
 				}
 				
 				// Konfirmasi dengan user
