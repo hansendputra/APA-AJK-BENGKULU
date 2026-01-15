@@ -453,6 +453,7 @@ $setproduk = '';
           SET statusaktif = '".$statusaktif."',
           extrapremi = '".$em."',
           totalpremi = '".$totalpremi."'
+          keterangan = '".$keterangan."'
           WHERE idpeserta = '".$idpeserta."'";
           
           $querypesertaas = "UPDATE ajkpesertaas
