@@ -452,7 +452,7 @@ $setproduk = '';
           $querypeserta = "UPDATE ajkpeserta 
           SET statusaktif = '".$statusaktif."',
           extrapremi = '".$em."',
-          totalpremi = '".$totalpremi."'
+          totalpremi = '".$totalpremi."',
           keterangan = '".$keterangan."'
           WHERE idpeserta = '".$idpeserta."'";
           
@@ -516,7 +516,8 @@ $setproduk = '';
           $pesan = 'SPAJK telah ditolak oleh '.$namauser.'.';
           
           $querypeserta = "UPDATE ajkpeserta 
-          SET statusaktif = '".$statusaktif."'
+          SET statusaktif = '".$statusaktif."',
+          keterangan = '".$keterangan."'
           WHERE idpeserta = '".$idpeserta."'";
           
           try{
