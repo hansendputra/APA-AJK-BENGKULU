@@ -41,7 +41,7 @@ switch ($_REQUEST['edn']) {
                       idclient="'.$_REQUEST['idclient'].'" AND
                       idpolicy="'.$_REQUEST['idproduk'].'" AND
                       cabang="'.$_REQUEST['cbg'].'" AND
-                      statusaktif="Analisa Asuransi"  AND
+                      statusaktif="Approve Asuransi"  AND
                       del IS NULL AND
                       iddn IS NULL AND idpeserta in ('.$fpeserta.')';
 
