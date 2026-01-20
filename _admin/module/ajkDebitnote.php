@@ -588,7 +588,7 @@ switch ($_REQUEST['edn']) {
                     INNER JOIN ajkregional ON ajkcabang.idreg = ajkregional.er
                     WHERE ajkpeserta.iddn IS NULL AND
                           ajkpeserta.del IS NULL AND
-                          ajkpeserta.statusaktif="Analisa Asuransi" AND
+                          ajkpeserta.statusaktif="Approve Asuransi" AND
                           ajkpeserta.idpolicy="'.$thisEncrypter->decode($_REQUEST['idp']).'"
                           AND
                           ajkpeserta.cabang="'.$thisEncrypter->decode($_REQUEST['cbg']).'"
@@ -723,7 +723,7 @@ switch ($_REQUEST['edn']) {
 																 LEFT JOIN ajkkategoriprofesi ON ajkkategoriprofesi.id = ajkprofesi.idkategoriprofesi
 																 WHERE ajkpeserta.iddn IS NULL AND
 																 	   ajkpeserta.del IS NULL AND
-																 	   ajkpeserta.statusaktif="Analisa Asuransi" AND
+																 	   ajkpeserta.statusaktif="Approve Asuransi" AND
 																 	   ajkpeserta.cabang="'.$thisEncrypter->decode($_REQUEST['cbg']).'" AND
 																 	   ajkpeserta.idpolicy="'.$thisEncrypter->decode($_REQUEST['idp']).'"
 																		 
@@ -1098,7 +1098,7 @@ switch ($_REQUEST['edn']) {
 											  INNER JOIN ajkclient ON ajkpeserta.idclient = ajkclient.id
 											  LEFT JOIN ajkpolis ON ajkpeserta.idpolicy = ajkpolis.id and ajkpolis.del is null
 											  INNER JOIN ajkcabang ON ajkpeserta.cabang = ajkcabang.er
-											  WHERE ajkpeserta.iddn IS NULL AND ajkpeserta.statusaktif="Analisa Asuransi" '.$q___1.' AND ajkpeserta.del IS NULL
+											  WHERE ajkpeserta.iddn IS NULL AND ajkpeserta.statusaktif="Approve Asuransi" '.$q___1.' AND ajkpeserta.del IS NULL
 											  GROUP BY ajkclient.`name`,ajkpolis.produk,ajkcabang.`name`,ajkpeserta.idpolicy,ajkpeserta.cabang
 											  ORDER BY ajkpeserta.input_time DESC');
                 while ($metExl_ = mysql_fetch_array($metExl)) {                  
