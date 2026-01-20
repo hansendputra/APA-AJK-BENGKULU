@@ -444,7 +444,7 @@ $setproduk = '';
         $pesan = '';
         
         if($aksi === 'Approve') {
-          $statusaktif = 'Approve';
+          $statusaktif = 'Approve Asuransi';
           $premi = $qpeserta['premi'];
           $em = $premi * $extrapremi/100;
           $totalpremi = $premi + $em;
@@ -484,11 +484,12 @@ $setproduk = '';
           }
         } 
         else if($aksi === 'Revisi') {
-          $statusaktif = 'validasi';
+          $statusaktif = 'Pending';
           $pesan = 'SPAJK diminta untuk revisi oleh '.$namauser.'.';
           
           $querypeserta = "UPDATE ajkpeserta 
-          SET statusaktif = '".$statusaktif."'
+          SET statusaktif = '".$statusaktif."',
+          keterangan = '".$keterangan."'
           WHERE idpeserta = '".$idpeserta."'";
           
           try{
