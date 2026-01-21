@@ -903,40 +903,88 @@ switch ($_REQUEST['dt']) {
         
         // Handle file uploads
         $documentsArray = array();
-        $target_dir = "../image/documents/";
+        $uploadErrors = array();
+        $target_dir = $PathPeserta."/".$peserta['idpeserta']."/";
         
         // Create directory if not exists
         if (!is_dir($target_dir)) {
-          mkdir($target_dir, 0755, true);
+          if (!mkdir($target_dir, 0755, true)) {
+            echo '
+            <div class="alert alert-dismissable alert-danger">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+              <strong>Error!</strong> Gagal membuat direktori untuk upload file.
+            </div>';
+            exit;
+          }
         }
         
         // Allowed file types
         $allowed_types = array('pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'gif');
         
         // Upload Document 1
-        if (isset($_FILES["documents1"]) && $_FILES["documents1"]["error"] == UPLOAD_ERR_OK) {
-          $namafile1 = date('dmYHis').'_1_'.str_replace(" ", "", basename($_FILES["documents1"]["name"]));
-          $target_file1 = $target_dir . $namafile1;
-          $imageFileType1 = strtolower(pathinfo($target_file1, PATHINFO_EXTENSION));
-          
-          if (in_array($imageFileType1, $allowed_types) && $_FILES["documents1"]["size"] <= 5242880) {
-            if (move_uploaded_file($_FILES["documents1"]["tmp_name"], $target_file1)) {
-              $documentsArray['DOCUMENT_APPROVE_1'] = $namafile1;
+        if (isset($_FILES["documents1"]) && $_FILES["documents1"]["name"] != "") {
+          if ($_FILES["documents1"]["error"] == UPLOAD_ERR_OK) {
+            $namafile1 = date('dmYHis').'_1_'.str_replace(" ", "", basename($_FILES["documents1"]["name"]));
+            $target_file1 = $target_dir . $namafile1;
+            $imageFileType1 = strtolower(pathinfo($target_file1, PATHINFO_EXTENSION));
+            
+            if (!in_array($imageFileType1, $allowed_types)) {
+              $uploadErrors[] = "Dokumen/File 1: Tipe file tidak diizinkan. Hanya PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF yang diperbolehkan.";
+            } elseif ($_FILES["documents1"]["size"] > 5242880) {
+              $uploadErrors[] = "Dokumen/File 1: Ukuran file terlalu besar. Maksimal 5MB.";
+            } else {
+              if (!move_uploaded_file($_FILES["documents1"]["tmp_name"], $target_file1)) {
+                $uploadErrors[] = "Dokumen/File 1: Gagal mengupload file ke server.";
+              } else {
+                $documentsArray['DOCUMENT_APPROVE_1'] = $namafile1;
+              }
             }
+          } else {
+            $uploadErrors[] = "Dokumen/File 1: Error upload - " . $_FILES["documents1"]["error"];
           }
         }
         
         // Upload Document 2
-        if (isset($_FILES["documents2"]) && $_FILES["documents2"]["error"] == UPLOAD_ERR_OK) {
-          $namafile2 = date('dmYHis').'_2_'.str_replace(" ", "", basename($_FILES["documents2"]["name"]));
-          $target_file2 = $target_dir . $namafile2;
-          $imageFileType2 = strtolower(pathinfo($target_file2, PATHINFO_EXTENSION));
-          
-          if (in_array($imageFileType2, $allowed_types) && $_FILES["documents2"]["size"] <= 5242880) {
-            if (move_uploaded_file($_FILES["documents2"]["tmp_name"], $target_file2)) {
-              $documentsArray['DOCUMENT_APPROVE_2'] = $namafile2;
+        if (isset($_FILES["documents2"]) && $_FILES["documents2"]["name"] != "") {
+          if ($_FILES["documents2"]["error"] == UPLOAD_ERR_OK) {
+            $namafile2 = date('dmYHis').'_2_'.str_replace(" ", "", basename($_FILES["documents2"]["name"]));
+            $target_file2 = $target_dir . $namafile2;
+            $imageFileType2 = strtolower(pathinfo($target_file2, PATHINFO_EXTENSION));
+            
+            if (!in_array($imageFileType2, $allowed_types)) {
+              $uploadErrors[] = "Dokumen/File 2: Tipe file tidak diizinkan. Hanya PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF yang diperbolehkan.";
+            } elseif ($_FILES["documents2"]["size"] > 5242880) {
+              $uploadErrors[] = "Dokumen/File 2: Ukuran file terlalu besar. Maksimal 5MB.";
+            } else {
+              if (!move_uploaded_file($_FILES["documents2"]["tmp_name"], $target_file2)) {
+                $uploadErrors[] = "Dokumen/File 2: Gagal mengupload file ke server.";
+              } else {
+                $documentsArray['DOCUMENT_APPROVE_2'] = $namafile2;
+              }
             }
+          } else {
+            $uploadErrors[] = "Dokumen/File 2: Error upload - " . $_FILES["documents2"]["error"];
           }
+        }
+        
+        // Check if there are upload errors
+        if (!empty($uploadErrors)) {
+          echo '
+          <div class="alert alert-dismissable alert-danger">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <strong>Error Upload!</strong>
+            <ul>';
+          foreach ($uploadErrors as $error) {
+            echo '<li>' . $error . '</li>';
+          }
+          echo '</ul>
+          </div>
+          <script>
+            setTimeout(function() {
+              window.location.href = "ajk.php?re=data&dt=viewpending&id='.$_REQUEST['id'].'";
+            }, 5000);
+          </script>';
+          exit;
         }
         
         // Convert to JSON
