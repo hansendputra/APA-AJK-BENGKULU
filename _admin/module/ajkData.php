@@ -862,6 +862,40 @@ switch ($_REQUEST['dt']) {
     $query = "select * from ajkpeserta where idpeserta = '".$idpeserta."'";
     $peserta = mysql_fetch_array($database->doQuery($query));
 
+    // Get existing documents from ajkpesertaas
+    $queryDocs = "SELECT documents FROM ajkpesertaas WHERE idpeserta = '".$idpeserta."'";
+    $resultDocs = mysql_fetch_array($database->doQuery($queryDocs));
+    $existingDocs = array();
+    if ($resultDocs && !empty($resultDocs['documents'])) {
+      $existingDocs = json_decode($resultDocs['documents'], true);
+    }
+
+    // Handle delete document
+    if ($_REQUEST['src']=="deletedocument" && $_REQUEST['docKey']) {
+      $docKey = $_REQUEST['docKey'];
+      if (isset($existingDocs[$docKey])) {
+        unset($existingDocs[$docKey]);
+        $newDocsJson = !empty($existingDocs) ? json_encode($existingDocs) : '';
+        
+        $queryDelete = "UPDATE ajkpesertaas 
+                       SET documents = '".mysql_real_escape_string($newDocsJson)."',
+                           update_by = '".$q['id']."',
+                           update_time = '".$today."'
+                       WHERE idpeserta = '".$idpeserta."'";
+        $resultDelete = mysql_query($queryDelete);
+        
+        if($resultDelete){
+          echo '
+          <meta http-equiv="refresh" content="2; url=ajk.php?re=data&dt=viewpending&id='.$_REQUEST['id'].'">
+            <div class="alert alert-dismissable alert-success">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+              <strong>Success!</strong> File berhasil dihapus.
+            </div>';
+          exit;
+        }
+      }
+    }
+
     if (
       (
         strpos($peserta['medical'], 'NM') !== false ||
@@ -904,7 +938,8 @@ switch ($_REQUEST['dt']) {
         // Handle file uploads
         $documentsArray = array();
         $uploadErrors = array();
-        $target_dir = $PathPeserta."/".$peserta['idpeserta']."/";
+        $target_dir = "../myFiles/_peserta/".$peserta['idpeserta']."/";
+        print_r($target_dir);exit;
         
         // Create directory if not exists
         if (!is_dir($target_dir)) {
@@ -1240,7 +1275,20 @@ switch ($_REQUEST['dt']) {
                     <div class="row">
                       <div class="col-md-10">
                         <input type="file" name="documents1" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"/>
-                        <small class="form-text text-muted">Tipe file: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF (Max 5MB)</small>
+                        <small class="form-text text-muted">Tipe file: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF (Max 5MB)</small>';
+                        
+                        // Display existing document 1
+                        if (isset($existingDocs['DOCUMENT_APPROVE_1'])) {
+                          echo '<br><div class="alert alert-info" style="margin-top:10px;">
+                            <strong>File saat ini:</strong> '.$existingDocs['DOCUMENT_APPROVE_1'].'
+                            <div style="margin-top:5px;">
+                              <a href="../myFiles/_peserta/'.$peserta['idpeserta'].'/'.$existingDocs['DOCUMENT_APPROVE_1'].'" target="_blank" class="btn btn-primary btn-xs"><i class="fa fa-download"></i> Download</a>
+                              <a href="ajk.php?re=data&dt=viewpending&id='.$_REQUEST['id'].'&src=deletedocument&docKey=DOCUMENT_APPROVE_1" onclick="return confirm(\'Yakin ingin menghapus file ini?\')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
+                            </div>
+                          </div>';
+                        }
+                        
+                        echo '
                       </div>
                     </div>
                   </div>
@@ -1251,7 +1299,20 @@ switch ($_REQUEST['dt']) {
                     <div class="row">
                       <div class="col-md-10">
                         <input type="file" name="documents2" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"/>
-                        <small class="form-text text-muted">Tipe file: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF (Max 5MB)</small>
+                        <small class="form-text text-muted">Tipe file: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF (Max 5MB)</small>';
+                        
+                        // Display existing document 2
+                        if (isset($existingDocs['DOCUMENT_APPROVE_2'])) {
+                          echo '<br><div class="alert alert-info" style="margin-top:10px;">
+                            <strong>File saat ini:</strong> '.$existingDocs['DOCUMENT_APPROVE_2'].'
+                            <div style="margin-top:5px;">
+                              <a href="../myFiles/_peserta/'.$peserta['idpeserta'].'/'.$existingDocs['DOCUMENT_APPROVE_2'].'" target="_blank" class="btn btn-primary btn-xs"><i class="fa fa-download"></i> Download</a>
+                              <a href="ajk.php?re=data&dt=viewpending&id='.$_REQUEST['id'].'&src=deletedocument&docKey=DOCUMENT_APPROVE_2" onclick="return confirm(\'Yakin ingin menghapus file ini?\')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
+                            </div>
+                          </div>';
+                        }
+                        
+                        echo '
                       </div>
                     </div>
                   </div>
