@@ -901,38 +901,46 @@ switch ($_REQUEST['dt']) {
         $em = isset($_REQUEST['extrapremi']) ? $_REQUEST['extrapremi'] : '0';
         $totalpremi = $peserta['premi'] + $em;
         
-        // Handle file upload
-        $documents = '';
-        if (isset($_FILES["documents"]) && $_FILES["documents"]["error"] == UPLOAD_ERR_OK) {
-          $target_dir = "../image/documents/";
-          // Create directory if not exists
-          if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0755, true);
-          }
+        // Handle file uploads
+        $documentsArray = array();
+        $target_dir = "../image/documents/";
+        
+        // Create directory if not exists
+        if (!is_dir($target_dir)) {
+          mkdir($target_dir, 0755, true);
+        }
+        
+        // Allowed file types
+        $allowed_types = array('pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'gif');
+        
+        // Upload Document 1
+        if (isset($_FILES["documents1"]) && $_FILES["documents1"]["error"] == UPLOAD_ERR_OK) {
+          $namafile1 = date('dmYHis').'_1_'.str_replace(" ", "", basename($_FILES["documents1"]["name"]));
+          $target_file1 = $target_dir . $namafile1;
+          $imageFileType1 = strtolower(pathinfo($target_file1, PATHINFO_EXTENSION));
           
-          $namafile = date('dmYHis').str_replace(" ", "", basename($_FILES["documents"]["name"]));
-          $target_file = $target_dir . $namafile;
-          $uploadOk = 1;
-          $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-          
-          // Allowed file types
-          $allowed_types = array('pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'gif');
-          
-          if (!in_array($imageFileType, $allowed_types)) {
-            $uploadOk = 0;
-          }
-          
-          // Check file size (max 5MB)
-          if ($_FILES["documents"]["size"] > 5242880) {
-            $uploadOk = 0;
-          }
-          
-          if ($uploadOk == 1) {
-            if (move_uploaded_file($_FILES["documents"]["tmp_name"], $target_file)) {
-              $documents = $namafile;
+          if (in_array($imageFileType1, $allowed_types) && $_FILES["documents1"]["size"] <= 5242880) {
+            if (move_uploaded_file($_FILES["documents1"]["tmp_name"], $target_file1)) {
+              $documentsArray['DOCUMENT_APPROVE_1'] = $namafile1;
             }
           }
         }
+        
+        // Upload Document 2
+        if (isset($_FILES["documents2"]) && $_FILES["documents2"]["error"] == UPLOAD_ERR_OK) {
+          $namafile2 = date('dmYHis').'_2_'.str_replace(" ", "", basename($_FILES["documents2"]["name"]));
+          $target_file2 = $target_dir . $namafile2;
+          $imageFileType2 = strtolower(pathinfo($target_file2, PATHINFO_EXTENSION));
+          
+          if (in_array($imageFileType2, $allowed_types) && $_FILES["documents2"]["size"] <= 5242880) {
+            if (move_uploaded_file($_FILES["documents2"]["tmp_name"], $target_file2)) {
+              $documentsArray['DOCUMENT_APPROVE_2'] = $namafile2;
+            }
+          }
+        }
+        
+        // Convert to JSON
+        $documentsJson = !empty($documentsArray) ? json_encode($documentsArray) : '';
         
         if($q['level'] == 90){
           $query = "UPDATE ajkpeserta set statusaktif = 'Validasi',extrapremi= '".$em."',totalpremi= '".$totalpremi."',update_by='".$q['id']."',update_time='".$today."' where idpeserta = '".$idpeserta."'";
@@ -943,9 +951,9 @@ switch ($_REQUEST['dt']) {
         $result = mysql_query($query);
         
         // Update ajkpesertaas with documents if file uploaded
-        if ($result && !empty($documents)) {
+        if ($result && !empty($documentsJson)) {
           $query_update_as = "UPDATE ajkpesertaas 
-                             SET documents = '".$documents."',
+                             SET documents = '".mysql_real_escape_string($documentsJson)."',
                                  update_by = '".$q['id']."',
                                  update_time = '".$today."'
                              WHERE idpeserta = '".$idpeserta."'";
@@ -1179,12 +1187,23 @@ switch ($_REQUEST['dt']) {
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="control-label col-sm-2">Dokumen/File</label>
+                  <label class="control-label col-sm-2">Dokumen/File 1</label>
                   <div class="col-sm-10">
                     <div class="row">
                       <div class="col-md-10">
-                        <input type="file" name="documents" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"/>
-                        <small class="form-text text-muted">Tipe file: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF</small>
+                        <input type="file" name="documents1" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"/>
+                        <small class="form-text text-muted">Tipe file: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF (Max 5MB)</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-2">Dokumen/File 2</label>
+                  <div class="col-sm-10">
+                    <div class="row">
+                      <div class="col-md-10">
+                        <input type="file" name="documents2" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"/>
+                        <small class="form-text text-muted">Tipe file: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF (Max 5MB)</small>
                       </div>
                     </div>
                   </div>
