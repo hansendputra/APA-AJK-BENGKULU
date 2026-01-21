@@ -100,5 +100,6 @@ define("BTN_APPROVESPK", "<button type=\"submit\" class=\"btn btn-success mb5 bt
 define("BTN_REJECT", "<button type=\"submit\" class=\"btn btn-danger mb5 btn-xs\"><i class=\"ico-cancel\"></i> Reject</button>");
 define("BTN_APPROVESPKAktif", "<button type=\"submit\" class=\"btn btn-primary mb5 btn-xs\"><i class=\"ico-file8\"></i> Approve SPK</button>");
 define("BTN_EDITSPK", "<button type=\"submit\" class=\"btn btn-primary mb5 btn-xs\"><i class=\"ico-file8\"></i> Edit SPK</button>");
+define("BTN_APPROVEAS", "<button type=\"submit\" class=\"btn btn-success mb5 btn-xs\"><i class=\"ico-file8\"></i> Approval Asuransi</button>");
 
 # BUTTON

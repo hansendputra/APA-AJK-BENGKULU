@@ -900,6 +900,40 @@ switch ($_REQUEST['dt']) {
         // Direct approval execution
         $em = isset($_REQUEST['extrapremi']) ? $_REQUEST['extrapremi'] : '0';
         $totalpremi = $peserta['premi'] + $em;
+        
+        // Handle file upload
+        $documents = '';
+        if (isset($_FILES["documents"]) && $_FILES["documents"]["error"] == UPLOAD_ERR_OK) {
+          $target_dir = "../image/documents/";
+          // Create directory if not exists
+          if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0755, true);
+          }
+          
+          $namafile = date('dmYHis').str_replace(" ", "", basename($_FILES["documents"]["name"]));
+          $target_file = $target_dir . $namafile;
+          $uploadOk = 1;
+          $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+          
+          // Allowed file types
+          $allowed_types = array('pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'gif');
+          
+          if (!in_array($imageFileType, $allowed_types)) {
+            $uploadOk = 0;
+          }
+          
+          // Check file size (max 5MB)
+          if ($_FILES["documents"]["size"] > 5242880) {
+            $uploadOk = 0;
+          }
+          
+          if ($uploadOk == 1) {
+            if (move_uploaded_file($_FILES["documents"]["tmp_name"], $target_file)) {
+              $documents = $namafile;
+            }
+          }
+        }
+        
         if($q['level'] == 90){
           $query = "UPDATE ajkpeserta set statusaktif = 'Validasi',extrapremi= '".$em."',totalpremi= '".$totalpremi."',update_by='".$q['id']."',update_time='".$today."' where idpeserta = '".$idpeserta."'";
         }elseif($q['level'] > 90){
@@ -907,11 +941,22 @@ switch ($_REQUEST['dt']) {
         }
         
         $result = mysql_query($query);
+        
+        // Update ajkpesertaas with documents if file uploaded
+        if ($result && !empty($documents)) {
+          $query_update_as = "UPDATE ajkpesertaas 
+                             SET documents = '".$documents."',
+                                 update_by = '".$q['id']."',
+                                 update_time = '".$today."'
+                             WHERE idpeserta = '".$idpeserta."'";
+          mysql_query($query_update_as);
+        }
+        
         if($result){
           echo '
           <meta http-equiv="refresh" content="2; url=ajk.php?re=data&dt=pending">
             <div class="alert alert-dismissable alert-success">
-              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">�</button>
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
               <strong>Success!</strong>
             </div>';
           exit; // Stop execution to prevent form from showing
@@ -1132,12 +1177,23 @@ switch ($_REQUEST['dt']) {
                       </div>
                     </div>
                   </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-2">Dokumen/File</label>
+                  <div class="col-sm-10">
+                    <div class="row">
+                      <div class="col-md-10">
+                        <input type="file" name="documents" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"/>
+                        <small class="form-text text-muted">Tipe file: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF</small>
+                      </div>
+                    </div>
+                  </div>
                 </div>                
               </div>
               <div class="panel-footer">
                 <input type="hidden" name="src" value="approvepending">
-                <input type="hidden" name="extrapremi" value="0">'.BTN_APPROVESPK.' 
-                <button type="button" class="btn btn-danger mb5 btn-xs" onclick="rejectWithKeterangan(this.form)"><i class="ico-cancel"></i> In Completed</button>
+                <input type="hidden" name="extrapremi" value="0">'.BTN_APPROVEAS.' 
+                <button type="button" class="btn btn-danger mb5 btn-xs" onclick="rejectWithKeterangan(this.form)"><i class="ico-cancel"></i> Pending</button>
                 <button type="button" class="btn btn-danger mb5 btn-xs" onclick="tolak(this.form)"><i class="ico-cancel"></i> Tolak Asuransi</button>
                 <!--<button type="button" class="btn btn-info mb5 btn-xs" onclick="sendToVlife(this.form)"><i class="ico-upload"></i> Send to VAI</button>-->
               </div>
