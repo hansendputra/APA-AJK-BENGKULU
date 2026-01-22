@@ -255,14 +255,6 @@ _head($user, $namauser, $photo, $logo);
                   <option value="KUR">KUR</option>
                   <option value="KPR">KPR</option>
                   <option value="THT">THT</option>
-									<?php
-                    // $queryprod = mysql_query("SELECT * FROM ajkpolis WHERE idcost = '".$idclient."' AND del IS NULL");
-                    // while ($rowprod = mysql_fetch_array($queryprod)) {
-                    //     $idprod = $rowprod['id'];
-                    //     $namaprod = $rowprod['produk'];
-                    //     echo '<option value="'.$idprod.'">'.$namaprod.'</option>';
-                    // }
-                   ?>
 								</select>
 						    </div>
 						</div>
@@ -272,7 +264,7 @@ _head($user, $namauser, $photo, $logo);
 					echo $ls_cabangas;
 					?>
 					
-            <?php if($level != 71 or $level != 90){?>
+            <?php if($level != 71 or $idas != ""){?>
 						<div class="form-group">
 							<label class="control-label col-sm-3">Tanggal Akad <span class="text-danger">*</span></label>
 							<div class="col-sm-3">
@@ -327,7 +319,6 @@ _head($user, $namauser, $photo, $logo);
 		$(document).ready(function() {
 		  App.init();
 		  Demo.init();
-		  //test();
 		  
 		  $(".active").removeClass("active");
 			document.getElementById("has_laporan").classList.add("active");
@@ -336,10 +327,8 @@ _head($user, $namauser, $photo, $logo);
 			<?php
         if ($typedata == 'peserta') {
             echo 'document.getElementById("idsub_lappeserta").classList.add("active");';
-            // echo "validate_tgl1();";
         } elseif ($typedata == 'debitnote') {
             echo 'document.getElementById("idsub_lapdebitnote").classList.add("active");';
-            // echo "validate_tgl1();";
         } elseif ($typedata == 'cnbatal') {
             echo 'document.getElementById("idsub_lapcreditnotebatal").classList.add("active");';
         } elseif ($typedata == 'cnrefund') {
@@ -348,31 +337,6 @@ _head($user, $namauser, $photo, $logo);
             echo 'document.getElementById("idsub_lapcreditnoteklaim").classList.add("active");';
         }
       ?>
-			 
-			function test(){	
-				var tgl1 = $("#startdate,#form-peserta").val();
-				var tgl2 = $("#enddate,#form-peserta").val();
-				var tgl3 = $("#startdatep,#form-peserta").val();
-				var tgl4 = $("#enddatep,#form-peserta").val();
-				  
-				if(tgl1=='' && tgl2=='' && tgl3=='' && tgl4==''){
-				    console.log(1);
-				    //$("#hidType,#form-peserta").val(1); 
-				    // validate_tgl1();
-				}
-				
-				if(tgl1!='' && tgl2=='' && tgl3=='' && tgl4==''){
-					console.log(2);
-					//$("#hidType,#form-peserta").val(2); 
-				  // validate_tgl1();
-				}
-				
-				if(tgl3!='' && tgl4=='' && tgl1=='' && tgl2==''){
-					console.log(3);
-					//$("#hidType,#form-peserta").val(2); 
-					//validate_tgl2();
-				} 
-			}
 						
 			$("#startdate").datepicker({
 				todayHighlight: !0,
@@ -422,89 +386,6 @@ _head($user, $namauser, $photo, $logo);
 				format:'dd/mm/yyyy',
 				autoclose: true
 			})			
-			
-			// function validate_tgl1(){
-			// 	console.log(111);
-			//     $('#form-peserta').bootstrapValidator({
-			// 		err: {
-			// 			container: 'tooltip'
-			// 		},
-			// 		framework: 'bootstrap',
-			// 		icon: {
-			// 			valid: 'glyphicon glyphicon-ok',
-			// 			invalid: 'glyphicon glyphicon-remove',
-			// 			validating: 'glyphicon glyphicon-refresh'
-			// 		}, 
-			// 		fields: { 
-			// 			startdate: {
-			// 				validators: {
-			// 					notEmpty: {
-			// 						message: 'Tanggal mulai tidak boleh kosong'
-			// 					},
-			// 					date: {
-			// 						format: 'DD/MM/YYYY',
-			// 						message: 'Format tanggal mulai dd/mm/yyyy'
-
-			// 					}
-			// 				}
-			// 			},
-			// 			enddate: {
-			// 				validators: {
-			// 					notEmpty: {
-			// 						message: 'Tanggal akhir tidak boleh kosong'
-			// 					},
-			// 					date: {
-			// 						format: 'DD/MM/YYYY',
-			// 						message: 'Format tanggal akhir dd/mm/yyyy'
-
-			// 					}
-			// 				}
-			// 			}
-			// 		} 
-			// 	});  
-			// }
-			
-			// function validate_tgl2(){
-			// 	console.log(222);
-			//     $('#form-peserta').bootstrapValidator({
-			// 		err: {
-			// 			container: 'tooltip'
-			// 		},
-			// 		framework: 'bootstrap',
-			// 		icon: {
-			// 			valid: 'glyphicon glyphicon-ok',
-			// 			invalid: 'glyphicon glyphicon-remove',
-			// 			validating: 'glyphicon glyphicon-refresh'
-			// 		}, 
-			// 		fields: {
-			// 			startdatep: {
-			// 				validators: {
-			// 					notEmpty: {
-			// 						message: 'Tanggal mulai tidak boleh kosong'
-			// 					},
-			// 					date: {
-			// 						format: 'DD/MM/YYYY',
-			// 						message: 'Format tanggal mulai dd/mm/yyyy'
-
-			// 					}
-			// 				}
-			// 			},
-			// 			enddatep: {
-			// 				validators: {
-			// 					notEmpty: {
-			// 						message: 'Tanggal akhir tidak boleh kosong'
-			// 					},
-			// 					date: {
-			// 						format: 'DD/MM/YYYY',
-			// 						message: 'Format tanggal akhir dd/mm/yyyy'
-
-			// 					}
-			// 				}
-			// 			}
-			// 		} 
-			// 	});
-			// }
-			
 		});		
 		 
 	</script>
