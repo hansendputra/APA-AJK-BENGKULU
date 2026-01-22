@@ -82,8 +82,9 @@
           }
 
           if($level == 91 && $idas != ""){
-            $q = "SELECT ajkpeserta.*, ajkcabang.name AS nmcabang
+            $q = "SELECT ajkpeserta.*,ajkpesertaas.medical as medicalas, ajkcabang.name AS nmcabang
             FROM ajkpeserta 
+            INNER JOIN ajkpesertaas ON ajkpeserta.idpeserta = ajkpesertaas.idpeserta and ajkpesertaas.idas = '".$idas."'
             INNER JOIN ajkcabang ON ajkpeserta.cabang = ajkcabang.er
             WHERE statusaktif = 'Analisa Asuransi'";
 
@@ -100,8 +101,10 @@
                     <thead>
                       <tr>
                         <td class="text-center">Nama</td>
+                        <td class="text-center">Medical</td>
                         <td class="text-center">Cabang</td>
-                        <td class="text-center">Tgl. Akad</td>
+                        <td class="text-center">Tgl. Pengajuan</td>
+                        <td class="text-center">Tgl. Pengerjaan</td>
                         <td class="text-center">Plafond</td>
                         <td class="text-center">Action</td>
                       </tr>
@@ -111,8 +114,10 @@
                         while($peserta = mysql_fetch_array($qpeserta)){
                           echo '<tr>
                             <td>'.$peserta['nama'].'</td>
+                            <td>'.$peserta['medicalas'].'</td>
                             <td class="text-center">'.$peserta['nmcabang'].'</td>
-                            <td class="text-center">'._convertDate($peserta['tglakad']).'</td>  
+                            <td class="text-center">'._convertDate($peserta['input_time']).'</td>
+                            <td class="text-center">'._convertDate($peserta['approve_time']).'</td>
                             <td class="text-right">'.duit($peserta['plafond']).'</td>
                             <td class="text-center">
                               <a class="btn btn-xs btn-primary" href="../input/spajk.php?xq='.AES::encrypt128CBC('form',ENCRYPTION_KEY).'&is='.$peserta['idpeserta'].'">View</a>
@@ -128,6 +133,13 @@
           </div>   
           <?php
           }
+          ?>
+          
+          <?php 
+          if($level == 71 || $idas != ""){
+
+          }else{
+
           ?>
           <!-- begin row -->
           <div class="row">
@@ -167,12 +179,6 @@
             </div>
             <!-- end col-4 -->
           </div>
-          <?php 
-          if($level == 71 || $idas != ""){
-
-          }else{
-
-          ?>
           <br>
           <div class="row">
             <!-- KALKULATOR BEGIN -->

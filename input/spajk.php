@@ -34,6 +34,51 @@ $setproduk = '';
 		<!-- begin #content -->
 		<div id="content" class="content">
       <?php 
+      // Fungsi untuk upload dokumen
+      function uploadDocuments($idpeserta) {
+        $uploadDir = '../myFiles/_peserta/'.$idpeserta.'/';
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        
+        $document1_name = '';
+        $document2_name = '';
+        
+        // Upload Document 1
+        if(isset($_FILES['document1']) && $_FILES['document1']['error'] == 0) {
+            $allowed = array('pdf', 'jpg', 'jpeg', 'png');
+            $filename = $_FILES['document1']['name'];
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+            
+            if(in_array($ext, $allowed) && $_FILES['document1']['size'] <= 5242880) { // 5MB
+                $document1_name = 'doc1_'.time().'_'.uniqid().'.'.$ext;
+                move_uploaded_file($_FILES['document1']['tmp_name'], $uploadDir.$document1_name);
+            }
+        }
+        
+        // Upload Document 2
+        if(isset($_FILES['document2']) && $_FILES['document2']['error'] == 0) {
+            $allowed = array('pdf', 'jpg', 'jpeg', 'png');
+            $filename = $_FILES['document2']['name'];
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+            
+            if(in_array($ext, $allowed) && $_FILES['document2']['size'] <= 5242880) { // 5MB
+                $document2_name = 'doc2_'.time().'_'.uniqid().'.'.$ext;
+                move_uploaded_file($_FILES['document2']['tmp_name'], $uploadDir.$document2_name);
+            }
+        }
+        
+        // Return array dengan nama file dan JSON
+        $documents = array();
+        if($document1_name != '') $documents['document1'] = $document1_name;
+        if($document2_name != '') $documents['document2'] = $document2_name;
+        
+        return array(
+          'documents' => $documents,
+          'json' => json_encode($documents)
+        );
+      }
+      
       switch (AES::decrypt128CBC($_REQUEST['xq'],ENCRYPTION_KEY)) { 
       case "form":
         $peserta = mysql_fetch_array(mysql_query("SELECT * FROM ajkpeserta WHERE idpeserta = '".$_REQUEST['is']."'"));
@@ -281,6 +326,20 @@ $setproduk = '';
                   <?php } ?>
                 </div>                 
             </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">Dokumen 1</label>
+                <div class="col-sm-10">
+                  <input type="file" class="form-control" name="document1" id="document1" accept=".pdf,.jpg,.jpeg,.png" <?= isset($idas) ? 'disabled': '';?>>
+                  <small class="text-muted">Format: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
+                </div>                 
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">Dokumen 2</label>
+                <div class="col-sm-10">
+                  <input type="file" class="form-control" name="document2" id="document2" accept=".pdf,.jpg,.jpeg,.png" <?= isset($idas) ? 'disabled': '';?>>
+                  <small class="text-muted">Format: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
+                </div>                 
+            </div>
             <hr>
             <?php 
             if(isset($idas)) {
@@ -348,6 +407,11 @@ $setproduk = '';
         $jenispertanggungan = $_POST['jenispertanggungan'];
 
         $redirect = '../masterdata?type='.AES::encrypt128CBC('peserta', ENCRYPTION_KEY);
+        
+        // Upload dokumen
+        $uploadResult = uploadDocuments($idpeserta);
+        $documents = $uploadResult['documents'];
+        $documents_json = $uploadResult['json'];
 
         $bb = $_POST['bb'];
         $tb = $_POST['tb'];
@@ -392,6 +456,9 @@ $setproduk = '';
         $queryanswer8 = mysql_num_rows(mysql_query($queryanswer. ' AND idquestion = 8')) > 0 ? "UPDATE ajkformpesertaanswer SET answer = '".$bb."' WHERE idpeserta = '".$idpeserta."' and idquestion = 8" : "INSERT INTO ajkformpesertaanswer SET idpeserta= '".$idpeserta."',idquestion = 8, answer = '".$bb."'";
         $queryanswer9 = mysql_num_rows(mysql_query($queryanswer. ' AND idquestion = 9')) > 0 ? "UPDATE ajkformpesertaanswer SET answer = '".$keterangan."' WHERE idpeserta = '".$idpeserta."' and idquestion = 9" : "INSERT INTO ajkformpesertaanswer SET idpeserta= '".$idpeserta."',idquestion = 9, answer = '".$keterangan."'";
 
+        // Update documents di ajkpesertaas
+        $querydocuments = "UPDATE ajkpesertaas SET documents = '".$documents_json."' WHERE idpeserta = '".$idpeserta."'";
+        
         try{
           mysql_query("START TRANSACTION");
           mysql_query($querypeserta);
@@ -409,6 +476,10 @@ $setproduk = '';
           mysql_query($queryanswer7);
           mysql_query($queryanswer8);
           mysql_query($queryanswer9);
+          
+          if(!empty($documents)) {
+            mysql_query($querydocuments);
+          }
 
           mysql_query("COMMIT");
           echo '
@@ -438,6 +509,11 @@ $setproduk = '';
         $keterangan = $_POST['keterangan_aksi'];
         $extrapremi = isset($_POST['extrapremi']) ? $_POST['extrapremi'] : 0;
         
+        // Upload dokumen
+        $uploadResult = uploadDocuments($idpeserta);
+        $documents = $uploadResult['documents'];
+        $documents_json = $uploadResult['json'];
+        
         $qpeserta = mysql_fetch_array(mysql_query("SELECT * FROM ajkpeserta WHERE idpeserta = '".$idpeserta."'"));
 
         $statusaktif = '';
@@ -461,12 +537,23 @@ $setproduk = '';
           totalpremi = '".$totalpremi."'
           WHERE idpeserta = '".$idpeserta."' and idas = 2";
           
+          // Update documents di ajkpesertaas jika ada file yang diupload
+          $querydocuments = '';
+          if(!empty($documents)) {
+            $querydocuments = "UPDATE ajkpesertaas SET documents = '".$documents_json."' WHERE idpeserta = '".$idpeserta."'";
+          }
+          
           $pesan = 'SPAJK telah diapprove oleh '.$namauser.'.';
           
           try{
             mysql_query("START TRANSACTION");
             mysql_query($querypeserta);
             mysql_query($querypesertaas);
+            
+            if(!empty($documents)) {
+              mysql_query($querydocuments);
+            }
+            
             mysql_query("COMMIT");
             
             echo '
@@ -492,9 +579,20 @@ $setproduk = '';
           keterangan = '".$keterangan."'
           WHERE idpeserta = '".$idpeserta."'";
           
+          // Update documents di ajkpesertaas jika ada file yang diupload
+          $querydocuments = '';
+          if(!empty($documents)) {
+            $querydocuments = "UPDATE ajkpesertaas SET documents = '".$documents_json."' WHERE idpeserta = '".$idpeserta."'";
+          }
+          
           try{
             mysql_query("START TRANSACTION");
             mysql_query($querypeserta);
+            
+            if(!empty($documents)) {
+              mysql_query($querydocuments);
+            }
+            
             mysql_query("COMMIT");
             
             echo '
@@ -520,9 +618,20 @@ $setproduk = '';
           keterangan = '".$keterangan."'
           WHERE idpeserta = '".$idpeserta."'";
           
+          // Update documents di ajkpesertaas jika ada file yang diupload
+          $querydocuments = '';
+          if(!empty($documents)) {
+            $querydocuments = "UPDATE ajkpesertaas SET documents = '".$documents_json."' WHERE idpeserta = '".$idpeserta."'";
+          }
+          
           try{
             mysql_query("START TRANSACTION");
             mysql_query($querypeserta);
+            
+            if(!empty($documents)) {
+              mysql_query($querydocuments);
+            }
+            
             mysql_query("COMMIT");
             
             echo '
