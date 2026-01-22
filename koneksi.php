@@ -293,22 +293,8 @@
                 <li id="idsub_lappeserta"><a href="../report?type='.$lapmemins.'">Peserta</a></li>
               </ul>
             </li>';
-          }elseif($quserLevel['level'] == 8){
-            echo '
-            <li class="has-sub" id="has_upload">
-              <a href="javascript:;"><i class="fa fa-flag"></i><span>Upload<b class="caret"></b></span></a>
-              <ul class="sub-menu" id="sub_upload">
-                <li id="idsub_uploadcrf"><a href="../upload?xq='.$uploadcsf.'">Upload Certificate</a></li>
-              </ul>
-            </li>';
           }else{
-            echo '
-            <li class="has-sub" id="has_upload">
-              <a href="javascript:;"><i class="fa fa-flag"></i><span>Upload<b class="caret"></b></span></a>
-              <ul class="sub-menu" id="sub_upload">
-                <li id="idsub_uploadcrf"><a href="../upload?xq='.$uploadcsf.'">Upload Certificate</a></li>
-              </ul>
-            </li>
+            echo '            
             <li class="has-sub" id="has_laporan">
               <a href="javascript:;"><i class="fa fa-flag"></i><span>Laporan Asuransi<b class="caret"></b></span></a>
               <ul class="sub-menu" id="sub_laporan">
@@ -317,15 +303,7 @@
             </li>';
           }         
         }
-        // if ($quserLevel['level'] == 8) {
-        // 	echo '<li class="has-sub" id="has_shareas">
-        // 					<a href="javascript:;"><i class="fa fa-share-alt"></i><span>Share Asuransi <b class="caret"></b></span></a>
-        // 						<ul class="sub-menu" id="sub_share">
-        // 							<li id="sub_sharetarget"><a href="../shareas?a='.$sharetarget.'" >Set Target</a></li>
-        //               		<li id="sub_shareas"><a href="../shareas?a='.$shareas.'" >Set Share</a></li>
-        //               	</ul>
-        //           	</li>';
-        // }
+        
         echo '<li class="menu-control menu-control-left">
 						<a href="#" data-click="prev-menu"><i class="fa fa-angle-left"></i></a>
 					</li>

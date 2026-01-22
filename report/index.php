@@ -139,7 +139,7 @@ if (isset($_REQUEST['type'])) {
 				
 				$tgl_transaksi = '				
         <div class="form-group">
-          <label class="control-label col-sm-3">Tanggal Transaksi <span class="text-danger">*</span></label>
+          <label class="control-label col-sm-3">Tanggal Approval Asuransi <span class="text-danger">*</span></label>
           <div class="col-sm-3">
             <div class="input-group">
               <input type="text" name="startdatetrans" id="startdatetrans" class="form-control" placeholder="Start Date"  autocomplete="off"/>
@@ -272,7 +272,7 @@ _head($user, $namauser, $photo, $logo);
 					echo $ls_cabangas;
 					?>
 					
-            <?php if($level != 71){?>
+            <?php if($level != 71 or $level != 90){?>
 						<div class="form-group">
 							<label class="control-label col-sm-3">Tanggal Akad <span class="text-danger">*</span></label>
 							<div class="col-sm-3">
