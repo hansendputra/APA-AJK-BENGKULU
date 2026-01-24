@@ -342,7 +342,7 @@ $setproduk = '';
               </div>
             </div>
             <div class="form-group" id="extrapremi-group" style="display:none">
-              <label class="control-label col-sm-2">Extrapremi (%)</label>
+              <label class="control-label col-sm-2">Extrapremi</label>
               <div class="col-sm-10">
                 <input type="text" class="form-control" name="extrapremi" id="extrapremi">
               </div>
@@ -513,7 +513,7 @@ $setproduk = '';
         if($aksi === 'Approve') {
           $statusaktif = 'Approve Asuransi';
           $premi = $qpeserta['premi'];
-          $em = $premi * $extrapremi/100;
+          $em = $extrapremi;
           $totalpremi = $premi + $em;
           
           $querypeserta = "UPDATE ajkpeserta 
