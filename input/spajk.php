@@ -159,7 +159,7 @@ $setproduk = '';
                 <input type="text" class="form-control" name="kodepos" value="<?= $peserta['kodepos'] ?>" <?= isset($idas) ? 'readonly': '';?>>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
               <label class="control-label col-sm-2">Status </label>
               <div class="col-sm-10">
                 <select name="stsmarital" id="stsmarital" class="form-control" <?= isset($idas) ? 'readonly': '';?>>
@@ -183,16 +183,12 @@ $setproduk = '';
             </div>
             <div class="form-group">
               <label class="control-label col-sm-2">Pekerjaan </label>
-              <div class="col-sm-4">
+              <div class="col-sm-10">
                 <input type="text" class="form-control" name="pekerjaan" value="<?= $peserta['pekerjaan'] ?>" <?= isset($idas) ? 'readonly': '';?>>
-              </div>
-              <label class="control-label col-sm-2">Jabatan </label>
-              <div class="col-sm-4">
-                <input type="text" class="form-control" name="jabatan" value="<?= $peserta['jabatan'] ?>" <?= isset($idas) ? 'readonly': '';?>>
               </div>
             </div>
             <hr>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
               <label class="control-label col-sm-2">No. Polis </label>
               <div class="col-sm-10">
                 <input type="text" class="form-control" readonly>
@@ -216,15 +212,11 @@ $setproduk = '';
             </div>
             <div class="form-group">
               <label class="control-label col-sm-2">Uang Pertanggungan Awal </label>
-              <div class="col-sm-4">
+              <div class="col-sm-10">
                 <input type="text" class="form-control" value="<?= duit($peserta['plafond']) ?>" readonly>
               </div>
-              <label class="control-label col-sm-2">Suku Bunga Pinjaman</label>
-              <div class="col-sm-4">
-                <input type="text" class="form-control" name="sukubunga" value="<?= $peserta['sukubunga'] ?>" <?= isset($idas) ? 'readonly': '';?>>
-              </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
               <label class="control-label col-sm-2">Jenis Pertanggungan </label>
               <div class="col-sm-10">
                 <input type="text" class="form-control" name="jenispertanggungan" value="<?= $peserta['jenispertanggungan'] ?>" <?= isset($idas) ? 'readonly': '';?>>
@@ -326,21 +318,6 @@ $setproduk = '';
                   <?php } ?>
                 </div>                 
             </div>
-            <div class="form-group">
-                <label class="control-label col-sm-2">Dokumen 1</label>
-                <div class="col-sm-10">
-                  <input type="file" class="form-control" name="document1" id="document1" accept=".pdf,.jpg,.jpeg,.png" <?= isset($idas) ? 'disabled': '';?>>
-                  <small class="text-muted">Format: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
-                </div>                 
-            </div>
-            <div class="form-group">
-                <label class="control-label col-sm-2">Dokumen 2</label>
-                <div class="col-sm-10">
-                  <input type="file" class="form-control" name="document2" id="document2" accept=".pdf,.jpg,.jpeg,.png" <?= isset($idas) ? 'disabled': '';?>>
-                  <small class="text-muted">Format: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
-                </div>                 
-            </div>
-            <hr>
             <?php 
             if(isset($idas)) {
             ?>
@@ -370,6 +347,20 @@ $setproduk = '';
                 <input type="text" class="form-control" name="extrapremi" id="extrapremi">
               </div>
             </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2">Dokumen 1</label>
+              <div class="col-sm-10">
+                <input type="file" class="form-control" name="document1" id="document1" accept=".pdf,.jpg,.jpeg,.png">
+                <small class="text-muted">Format: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
+              </div>                 
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">Dokumen 2</label>
+                <div class="col-sm-10">
+                  <input type="file" class="form-control" name="document2" id="document2" accept=".pdf,.jpg,.jpeg,.png">
+                  <small class="text-muted">Format: PDF, JPG, JPEG, PNG (Max: 5MB)</small>
+                </div>                 
+            </div>            
             <div class="form-group m-b-0">
               <div class="col-sm-12 text-center">
                 <button type="button" id="submit-btn" class="btn btn-success width-xs" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Loading..">Submit</button>
