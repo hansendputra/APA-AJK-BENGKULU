@@ -1863,7 +1863,7 @@ switch ($_REQUEST['dt']) {
                 }
 
                 if(isset($metData_['noasuransi_img'])){
-                  $certificate = '<a href="'.$metData_['noasuransi_img'].'" target="_blank">'.$metData_['noasuransi'].'</a>';
+                  $certificate = '<a href="../myFiles/_sertifikat/'.$metData_['noasuransi_img'].'" target="_blank">'.$metData_['noasuransi'].'</a>';
                 }elseif(isset($metData_['nomordebitnote']) && $metData_['nomordebitnote'] != ""){
                   $certificate = '<a href="ajk.php?re=dlmPdf&pdf=sertifikatvictoria&id='.$metData_['idpeserta'].'" class="btn btn-primary btn-xs" target="_blank">Download</a>';
                 }else{
