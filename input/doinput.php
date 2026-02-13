@@ -262,6 +262,56 @@
     $asuransi = 2; 
   }
 
+  if($medical == ""){
+    $medical = '';
+    $idasjiwa = 2;
+    if($produk_['id'] != 11 and $produk_['id'] != 12){    
+      $qmedical2 = mysql_query("select * from ajkmedical where idas = '".$idasjiwa."' and idproduk = '".$produk."' and '".$usia."' between agefrom and ageto and '".$plafond."' between upfrom and upto and status = 'Aktif'");
+    
+      if(mysql_num_rows($qmedical2) > 0){
+        
+        if($macet == 'T'){
+          $medical1 = 'FCL';
+          $medical .= $medical1;
+        }
+        if($jiwa == 'T'){
+          $qmedical2_ = mysql_fetch_array($qmedical2);
+          $medical2 = $qmedical2_['type'];
+          if($medical2 != 'GIO'){
+            $asuransi = 5;
+            $idasjiwa = 5;
+
+            $qmedical2 = mysql_query("select * from ajkmedical where idas = '".$idasjiwa."' and idproduk = '".$produk."' and '".$usia."' between agefrom and ageto and '".$plafond."' between upfrom and upto and status = 'Aktif'");
+
+            $medical2 = 'FCL, '.$medical2;
+          }
+          $medical .= $medical2;
+        }
+       
+        $status = 'Pending';
+        $errormedical = null;
+      }else{
+        $msg[] = 'Medical tidak ditemukan';
+        $error = 1;
+      }
+    }else{
+      $qmedical = mysql_query("select * from ajkmedical where idas = '".$idasjiwa."' and idproduk = '".$produk."' and '".$usia."' between agefrom and ageto and '".$plafond."' between upfrom and upto and status = 'Aktif'");
+      if(mysql_num_rows($qmedical) > 0){
+        $qmedical_ = mysql_fetch_array($qmedical);
+        $medical = $qmedical_['type'];
+        
+        $status = 'Pending';      
+        $errormedical = null;
+      }else{
+        $msg[] = 'Medical tidak ditemukan';
+        $error = 1;
+      }
+    }
+  }else{
+    $status = 'Pending';
+    $errormedical = null;
+  }
+
   if($produk_['id'] != 11 and $produk_['id'] != 12){
     if($tenor > 60){
       $tenormacet = 60;
@@ -269,7 +319,7 @@
       $tenormacet = $tenor;
     }
     $qpremi1 = mysql_query("SELECT * FROM ajkratepremi WHERE idbroker = '".$idbro."' and idclient = '".$idclient."' and idpolis = '".$produk_['id']."' and idas = 3 and '".$tenormacet."' BETWEEN tenorfrom and tenorto and status = 'Aktif' and del is null");
-    $qpremi2 = mysql_query("SELECT * FROM ajkratepremi WHERE idbroker = '".$idbro."' and idclient = '".$idclient."' and idpolis = '".$produk_['id']."' and idas = 2 and '".$tenor."' BETWEEN tenorfrom and tenorto and '".$usia."' BETWEEN agefrom and ageto and status = 'Aktif' and del is null");  
+    $qpremi2 = mysql_query("SELECT * FROM ajkratepremi WHERE idbroker = '".$idbro."' and idclient = '".$idclient."' and idpolis = '".$produk_['id']."' and idas = '".$idasjiwa."' and '".$tenor."' BETWEEN tenorfrom and tenorto and '".$usia."' BETWEEN agefrom and ageto and status = 'Aktif' and del is null");  
     $rate = 0;
     $premi = 0;
     $medical = '';
@@ -324,47 +374,6 @@
         $errorrate = null;
       }
     }
-  }
-
-  if($medical == ""){
-    $medical = '';
-    if($produk_['id'] != 11 and $produk_['id'] != 12){    
-      $qmedical2 = mysql_query("select * from ajkmedical where idproduk = '".$produk."' and '".$usia."' between agefrom and ageto and '".$plafond."' between upfrom and upto and status = 'Aktif'");
-    
-      if(mysql_num_rows($qmedical2) > 0){
-        
-        if($macet == 'T'){
-          $medical1 = 'FCL';
-          $medical .= $medical1;
-        }
-        if($jiwa == 'T'){
-          $qmedical2_ = mysql_fetch_array($qmedical2);
-          $medical2 = $qmedical2_['type'];
-          $medical .= $medical2;
-        }
-       
-        $status = 'Pending';
-        $errormedical = null;
-      }else{
-        $msg[] = 'Medical tidak ditemukan';
-        $error = 1;
-      }
-    }else{
-      $qmedical = mysql_query("select * from ajkmedical where idproduk = '".$produk."' and '".$usia."' between agefrom and ageto and '".$plafond."' between upfrom and upto and status = 'Aktif'");
-      if(mysql_num_rows($qmedical) > 0){
-        $qmedical_ = mysql_fetch_array($qmedical);
-        $medical = $qmedical_['type'];
-        
-        $status = 'Pending';      
-        $errormedical = null;
-      }else{
-        $msg[] = 'Medical tidak ditemukan';
-        $error = 1;
-      }
-    }
-  }else{
-    $status = 'Pending';
-    $errormedical = null;
   }
   
   $time = date("YmdHis");
@@ -507,7 +516,7 @@
         $pesertaas2 = "INSERT INTO ajkpesertaas
         SET idpeserta='".$idpeserta."',
             idpolis='".$produk."',
-            idas=2,
+            idas='".$idasjiwa."',
             tsi ='".$plafond."',
             tglawal='".$tglakad."',
             tglakhir='".$tglakhir."',
@@ -525,7 +534,7 @@
       $pesertaas2 = "INSERT INTO ajkpesertaas
       SET idpeserta='".$idpeserta."',
           idpolis='".$produk."',
-          idas=2,
+          idas='".$idasjiwa."',
           tsi ='".$plafond."',
           tglawal='".$tglakad."',
           tglakhir='".$tglakhir."',
@@ -592,7 +601,17 @@
       }
     }
     mysql_query("COMMIT");
-    
+
+    // Notify external simulation endpoint with the new participant ID using cURL.
+    $simulationUrl = 'https://apiajk.adonai.co.id/mnc/Simulation/'.$idpeserta;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $simulationUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    @curl_exec($ch);
+    curl_close($ch);
+
     $return = array(
       'idpeserta' => $idpeserta,
       'medical' => $medical,
